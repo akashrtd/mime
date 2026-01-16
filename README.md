@@ -1,9 +1,10 @@
 # MIME
 
-**MIME** (Modern Internet Manipulation Engine) is a high-performance browser automation library built in Go, designed as a faster alternative to Puppeteer.
+**MIME** (MCP-Integrated Modern Executor) is a high-performance browser automation tool built in Go with native **Model Context Protocol (MCP)** support.
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io)
 
 ## 🏆 Performance
 
@@ -16,24 +17,61 @@
 ## ✨ Features
 
 - 🚀 **High Performance** - Built with Go and Rod (Chrome DevTools Protocol)
+- 🤖 **MCP Native** - AI agents like Claude can control browsers directly
 - 📦 **Single Binary** - No runtime dependencies
 - 🎯 **Simple API** - Cleaner than Puppeteer
-- ⚡ **Fast Startup** - Compiled, not interpreted
 
 ## 🚀 Installation
 
 ```bash
-go get github.com/akashrtd/mime
+go install github.com/akashrtd/mime/cmd/mime@latest
 ```
 
 Or build from source:
 ```bash
 git clone https://github.com/akashrtd/mime
 cd mime
-go build -o mime cmd/mime/main.go
+go build -o mime ./cmd/mime
 ```
 
-## 📖 Usage
+## 🤖 MCP Server (AI Integration)
+
+MIME can be used as an MCP server, allowing AI assistants to control browsers.
+
+### Configure with Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "mime": {
+      "command": "/path/to/mime",
+      "args": ["serve"]
+    }
+  }
+}
+```
+
+### Available MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `navigate` | Navigate to a URL |
+| `click` | Click an element by CSS selector |
+| `type` | Type text into an element |
+| `extract` | Extract text from an element |
+| `screenshot` | Capture screenshot (base64 PNG) |
+| `execute` | Run JavaScript on the page |
+| `html` | Get page HTML content |
+
+### Example Prompts for Claude
+
+- *"Navigate to https://news.ycombinator.com and extract the top story title"*
+- *"Go to example.com, take a screenshot, and describe what you see"*
+- *"Click the login button and type my email into the form"*
+
+## 📖 Go Library Usage
 
 ```go
 package main
@@ -53,51 +91,37 @@ func main() {
     }
     defer m.Close()
     
-    // Navigate
     m.Navigate("https://example.com")
-    
-    // Extract data
     title, _ := m.Extract("h1")
     fmt.Println(title)
-    
-    // Take screenshot
-    screenshot, _ := m.Screenshot()
 }
 ```
 
-## 🛠️ API
+## 🛠️ CLI Commands
 
-| Method | Description |
-|--------|-------------|
-| `Navigate(url)` | Navigate to URL |
-| `Click(selector)` | Click element |
-| `Type(selector, text)` | Type into element |
-| `Extract(selector)` | Extract text |
-| `ExtractAttr(selector, attr)` | Extract attribute |
-| `Screenshot()` | Capture screenshot (base64 PNG) |
-| `HTML()` | Get page HTML |
-| `Execute(script)` | Run JavaScript |
-| `WaitFor(selector)` | Wait for element |
+```bash
+# Start MCP server
+mime serve
+
+# Show version
+mime version
+```
 
 ## 📊 Benchmarks
 
-Run benchmarks yourself:
+See [benchmark/RESULTS.md](benchmark/RESULTS.md) for detailed performance comparison.
+
 ```bash
-# MIME benchmark
+# Run benchmarks
 go run benchmark/mime/benchmark.go
-
-# Puppeteer benchmark
-cd benchmark/puppeteer && npm install && node benchmark.js
 ```
-
-See [benchmark/RESULTS.md](benchmark/RESULTS.md) for detailed analysis.
 
 ## 🗺️ Roadmap
 
 - [x] Core browser automation
 - [x] Simple Go API  
 - [x] CLI tool
-- [ ] MCP (Model Context Protocol) integration
+- [x] MCP server integration
 - [ ] TypeScript SDK
 - [ ] Connection pooling
 - [ ] Retry logic
@@ -108,4 +132,5 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 🙏 Acknowledgments
 
-Built with [Rod](https://github.com/go-rod/rod) - High-level DevTools Protocol driver
+- [Rod](https://github.com/go-rod/rod) - High-level DevTools Protocol driver
+- [MCP](https://modelcontextprotocol.io) - Model Context Protocol by Anthropic
