@@ -1,0 +1,159 @@
+{
+    "$schema": "https://modelcontextprotocol.io/schemas/server.json",
+    "name": "mime",
+    "version": "0.1.0",
+    "description": "High-performance browser automation with MCP support. 27% faster than Puppeteer.",
+    "author": {
+        "name": "Akash Rathod",
+        "url": "https://github.com/akashrtd"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/akashrtd/mime"
+    },
+    "license": "MIT",
+    "runtime": "go",
+    "command": {
+        "type": "binary",
+        "path": "mime",
+        "args": [
+            "serve"
+        ]
+    },
+    "installation": {
+        "go": {
+            "install": "go install github.com/akashrtd/mime/cmd/mime@latest"
+        },
+        "source": {
+            "clone": "git clone https://github.com/akashrtd/mime",
+            "build": "go build -o mime ./cmd/mime"
+        }
+    },
+    "capabilities": {
+        "tools": true,
+        "resources": false,
+        "prompts": false
+    },
+    "tools": [
+        {
+            "name": "navigate",
+            "description": "Navigate the browser to a URL",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "URL to navigate to"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            }
+        },
+        {
+            "name": "click",
+            "description": "Click an element by CSS selector",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "selector": {
+                        "type": "string",
+                        "description": "CSS selector of element to click"
+                    }
+                },
+                "required": [
+                    "selector"
+                ]
+            }
+        },
+        {
+            "name": "type",
+            "description": "Type text into an element",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "selector": {
+                        "type": "string",
+                        "description": "CSS selector of element"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Text to type"
+                    }
+                },
+                "required": [
+                    "selector",
+                    "text"
+                ]
+            }
+        },
+        {
+            "name": "extract",
+            "description": "Extract text from an element",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "selector": {
+                        "type": "string",
+                        "description": "CSS selector of element"
+                    }
+                },
+                "required": [
+                    "selector"
+                ]
+            }
+        },
+        {
+            "name": "screenshot",
+            "description": "Capture a screenshot (base64 PNG)",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        },
+        {
+            "name": "execute",
+            "description": "Execute JavaScript on the page",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "script": {
+                        "type": "string",
+                        "description": "JavaScript code to execute"
+                    }
+                },
+                "required": [
+                    "script"
+                ]
+            }
+        },
+        {
+            "name": "html",
+            "description": "Get the page HTML content",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    ],
+    "categories": [
+        "browser",
+        "automation",
+        "web-scraping",
+        "testing"
+    ],
+    "keywords": [
+        "browser",
+        "automation",
+        "puppeteer",
+        "selenium",
+        "web",
+        "scraping",
+        "testing",
+        "chrome",
+        "headless"
+    ],
+    "homepage": "https://github.com/akashrtd/mime",
+    "documentation": "https://github.com/akashrtd/mime#readme"
+}

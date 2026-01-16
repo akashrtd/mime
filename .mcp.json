@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "mime": {
+            "command": "mime",
+            "args": [
+                "serve"
+            ],
+            "description": "Browser automation - navigate, click, type, extract, screenshot"
+        }
+    }
+}
