@@ -2,7 +2,7 @@
 
 **MIME** (MCP-Integrated Modern Executor) is a high-performance browser automation tool built in Go with native **Model Context Protocol (MCP)** support.
 
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://go.dev)
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io)
 
@@ -159,6 +159,21 @@ mime/
 └── go.mod
 ```
 
+## 🛠️ Development
+
+We use a `Makefile` to standardize development tasks.
+
+```bash
+# Show available commands
+make help
+
+# Build binary
+make build
+
+# Run tests
+make test
+```
+
 ## 🗺️ Roadmap
 
 - [x] Core browser automation
@@ -166,6 +181,7 @@ mime/
 - [x] CLI tool
 - [x] MCP server integration
 - [x] TypeScript SDK
+- [x] CI/CD & Automated Releases
 - [ ] Connection pooling
 - [ ] Retry logic
 
