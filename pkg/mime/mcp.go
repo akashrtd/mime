@@ -88,8 +88,23 @@ type HTMLOutput struct {
 	URL  string `json:"url"`
 }
 
+// WaitForOutput for wait_for tool
+type WaitForOutput struct {
+	Status string `json:"status"`
+}
+
+// ScrollOutput for scroll tool
+type ScrollOutput struct {
+	Status string `json:"status"`
+}
+
+// HoverOutput for hover tool
+type HoverOutput struct {
+	Status string `json:"status"`
+}
+
 // NewMCPServer creates a new MCP server for browser automation
-func NewMCPServer(ctx context.Context) (*MCPServer, error) {
+func NewMCPServer(ctx context.Context, opts *BrowserOptions) (*MCPServer, error) {
 	implementation := &mcp.Implementation{
 		Name:    "mime",
 		Version: "0.1.0",
@@ -102,10 +117,8 @@ func NewMCPServer(ctx context.Context) (*MCPServer, error) {
 		ctx:    ctx,
 	}
 
-	// Initialize browser
-	br, err := NewBrowser(ctx, &BrowserOptions{
-		Headless: true,
-	})
+	// Initialize browser with options
+	br, err := NewBrowser(ctx, opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create browser: %w", err)
 	}
@@ -137,7 +150,7 @@ func (s *MCPServer) registerTools() {
 	mcp.AddTool(s.server,
 		&mcp.Tool{
 			Name:        "click",
-			Description: "Click an element on the page by CSS selector",
+			Description: "Click an element on the page by CSS selector (supports 'text=Login')",
 		},
 		func(ctx context.Context, req *mcp.CallToolRequest, input ClickInput) (*mcp.CallToolResult, ClickOutput, error) {
 			if err := s.browser.Click(input.Selector); err != nil {
@@ -202,8 +215,15 @@ func (s *MCPServer) registerTools() {
 			if err != nil {
 				return nil, ExecuteOutput{}, fmt.Errorf("execute failed: %w", err)
 			}
-			resultJSON, _ := json.Marshal(result)
-			return nil, ExecuteOutput{Result: string(resultJSON)}, nil
+			// Handle result safely if nil
+			var resultStr string
+			if result != nil {
+				resultJSON, _ := json.Marshal(result)
+				resultStr = string(resultJSON)
+			} else {
+				resultStr = "null"
+			}
+			return nil, ExecuteOutput{Result: resultStr}, nil
 		},
 	)
 
@@ -219,6 +239,50 @@ func (s *MCPServer) registerTools() {
 				return nil, HTMLOutput{}, fmt.Errorf("html failed: %w", err)
 			}
 			return nil, HTMLOutput{HTML: html, URL: s.browser.URL()}, nil
+		},
+	)
+
+	// NEW TOOLS
+
+	// WaitFor tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "wait_for",
+			Description: "Wait for an element to appear (supports 'text=Query')",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input WaitForArgs) (*mcp.CallToolResult, WaitForOutput, error) {
+			if err := s.browser.WaitFor(input.Selector); err != nil {
+				return nil, WaitForOutput{}, fmt.Errorf("wait failed: %w", err)
+			}
+			return nil, WaitForOutput{Status: "success"}, nil
+		},
+	)
+
+	// Scroll tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "scroll",
+			Description: "Scroll the window or an element",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input ScrollArgs) (*mcp.CallToolResult, ScrollOutput, error) {
+			if err := s.browser.Scroll(input.Selector, input.X, input.Y); err != nil {
+				return nil, ScrollOutput{}, fmt.Errorf("scroll failed: %w", err)
+			}
+			return nil, ScrollOutput{Status: "success"}, nil
+		},
+	)
+
+	// Hover tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "hover",
+			Description: "Hover over an element",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input HoverArgs) (*mcp.CallToolResult, HoverOutput, error) {
+			if err := s.browser.Hover(input.Selector); err != nil {
+				return nil, HoverOutput{}, fmt.Errorf("hover failed: %w", err)
+			}
+			return nil, HoverOutput{Status: "success"}, nil
 		},
 	)
 }

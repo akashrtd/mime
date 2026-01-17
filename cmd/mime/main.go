@@ -20,6 +20,8 @@ var rootCmd = &cobra.Command{
 	Long:  `MIME (MCP-Integrated Modern Executor) is a high-performance browser automation tool with native Model Context Protocol support.`,
 }
 
+var visible bool
+
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start MCP server for browser automation",
@@ -30,7 +32,7 @@ Configure in Claude Desktop:
   "mcpServers": {
     "mime": {
       "command": "/path/to/mime",
-      "args": ["serve"]
+      "args": ["serve", "--visible"]
     }
   }
 }`,
@@ -49,8 +51,13 @@ Configure in Claude Desktop:
 		}()
 
 		// Create MCP server
-		fmt.Fprintln(os.Stderr, "Starting MIME MCP server...")
-		server, err := mime.NewMCPServer(ctx)
+		fmt.Fprintf(os.Stderr, "Starting MIME MCP server (visible=%v)...\n", visible)
+
+		opts := &mime.BrowserOptions{
+			Headless: !visible,
+		}
+
+		server, err := mime.NewMCPServer(ctx, opts)
 		if err != nil {
 			return fmt.Errorf("failed to create MCP server: %w", err)
 		}
@@ -79,6 +86,7 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
+	serveCmd.Flags().BoolVar(&visible, "visible", false, "Show browser window (debug mode)")
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(versionCmd)
 }

@@ -76,6 +76,9 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 | `screenshot` | Capture screenshot (base64 PNG)  |
 | `execute`    | Run JavaScript on the page       |
 | `html`       | Get page HTML content            |
+| `wait_for`   | Wait for element (text/css)      |
+| `scroll`     | Scroll to element or position    |
+| `hover`      | Hover over an element            |
 
 ### Example Prompts for Claude
 
@@ -114,6 +117,10 @@ func main() {
 ```bash
 # Start MCP server
 mime serve
+
+# Start with visible browser (debug mode)
+mime serve --visible
+
 
 # Show version
 mime version

@@ -55,6 +55,27 @@ func NewBrowser(ctx context.Context, opts *BrowserOptions) (*Browser, error) {
 	}, nil
 }
 
+// getElement resolves a selector to an element, supporting "text=" prefix
+func (b *Browser) getElement(selector string) (*rod.Element, error) {
+	// Check for text selector prefix
+	if len(selector) > 5 && selector[:5] == "text=" {
+		text := selector[5:]
+		// Use rod's text search
+		elem, err := b.page.ElementR("body", text)
+		if err != nil {
+			return nil, fmt.Errorf("element with text %q not found: %w", text, err)
+		}
+		return elem, nil
+	}
+
+	// Default to CSS selector
+	elem, err := b.page.Element(selector)
+	if err != nil {
+		return nil, fmt.Errorf("element %q not found: %w", selector, err)
+	}
+	return elem, nil
+}
+
 // Navigate navigates to a URL
 func (b *Browser) Navigate(url string) error {
 	return b.page.Navigate(url)
@@ -62,27 +83,44 @@ func (b *Browser) Navigate(url string) error {
 
 // Click clicks an element by selector
 func (b *Browser) Click(selector string) error {
-	elem, err := b.page.Element(selector)
+	elem, err := b.getElement(selector)
 	if err != nil {
-		return fmt.Errorf("element not found: %s: %w", selector, err)
+		return err
+	}
+	// Ensure element is visible before clicking
+	if err := elem.WaitVisible(); err != nil {
+		return fmt.Errorf("element not visible: %w", err)
 	}
 	return elem.Click(proto.InputMouseButtonLeft, 1)
 }
 
 // Type types text into an element
 func (b *Browser) Type(selector, text string) error {
-	elem, err := b.page.Element(selector)
+	elem, err := b.getElement(selector)
 	if err != nil {
-		return fmt.Errorf("element not found: %s: %w", selector, err)
+		return err
 	}
-	return elem.Input(text)
+	// Select all text first to ensure we replace "input" content if needed,
+	// or matches standard "fill" behavior.
+	// Rod's Input appends. SelectAll + Input replaces.
+	if err := elem.SelectAllText(); err == nil {
+		if err := elem.Input(text); err != nil {
+			return err
+		}
+	} else {
+		// If SelectAll fails (e.g. not an input), try just Input
+		if err := elem.Input(text); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Extract extracts text from an element
 func (b *Browser) Extract(selector string) (string, error) {
-	elem, err := b.page.Element(selector)
+	elem, err := b.getElement(selector)
 	if err != nil {
-		return "", fmt.Errorf("element not found: %s: %w", selector, err)
+		return "", err
 	}
 	text, err := elem.Text()
 	if err != nil {
@@ -93,9 +131,9 @@ func (b *Browser) Extract(selector string) (string, error) {
 
 // ExtractAttr extracts an attribute from an element
 func (b *Browser) ExtractAttr(selector, attr string) (string, error) {
-	elem, err := b.page.Element(selector)
+	elem, err := b.getElement(selector)
 	if err != nil {
-		return "", fmt.Errorf("element not found: %s: %w", selector, err)
+		return "", err
 	}
 	val, err := elem.Attribute(attr)
 	if err != nil {
@@ -118,11 +156,35 @@ func (b *Browser) Screenshot() (string, error) {
 
 // WaitFor waits for an element to appear
 func (b *Browser) WaitFor(selector string) error {
-	_, err := b.page.Element(selector)
+	// getElement handles both CSS and text selectors, and Rod waits by default
+	_, err := b.getElement(selector)
 	return err
 }
 
-// Execute runs JavaScript code on the page
+// Hover hovers over an element
+func (b *Browser) Hover(selector string) error {
+	elem, err := b.getElement(selector)
+	if err != nil {
+		return err
+	}
+	return elem.Hover()
+}
+
+// Scroll scrolls the window or an element
+func (b *Browser) Scroll(selector string, x, y int) error {
+	if selector != "" {
+		elem, err := b.getElement(selector)
+		if err != nil {
+			return err
+		}
+		return elem.ScrollIntoView()
+	}
+	// Scroll window by x, y
+	_, err := b.page.Eval(fmt.Sprintf("window.scrollBy(%d, %d)", x, y))
+	return err
+}
+
+// execute script (unchanged)
 func (b *Browser) Execute(script string) (interface{}, error) {
 	result, err := b.page.Eval(script)
 	if err != nil {
