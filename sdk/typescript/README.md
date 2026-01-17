@@ -12,7 +12,7 @@ TypeScript SDK for **MIME** browser automation - Control browsers through the Mo
 ## Installation
 
 ```bash
-npm install @mime-browser/sdk
+bun add @mime-browser/sdk
 ```
 
 **Prerequisite**: Install the MIME binary first:
