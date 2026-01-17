@@ -107,6 +107,25 @@ mime serve
 mime version
 ```
 
+## 📦 TypeScript SDK
+
+Install the TypeScript SDK for Node.js projects:
+
+```bash
+npm install @mime-browser/sdk
+```
+
+```typescript
+import { MIME } from '@mime-browser/sdk';
+
+const browser = await MIME.connect();
+await browser.navigate('https://example.com');
+const title = await browser.extract('h1');
+await browser.close();
+```
+
+See [sdk/typescript/README.md](sdk/typescript/README.md) for full documentation.
+
 ## 📊 Benchmarks
 
 See [benchmark/RESULTS.md](benchmark/RESULTS.md) for detailed performance comparison.
@@ -122,7 +141,7 @@ go run benchmark/mime/benchmark.go
 - [x] Simple Go API  
 - [x] CLI tool
 - [x] MCP server integration
-- [ ] TypeScript SDK
+- [x] TypeScript SDK
 - [ ] Connection pooling
 - [ ] Retry logic
 
@@ -134,3 +153,4 @@ MIT License - see [LICENSE](LICENSE)
 
 - [Rod](https://github.com/go-rod/rod) - High-level DevTools Protocol driver
 - [MCP](https://modelcontextprotocol.io) - Model Context Protocol by Anthropic
+

@@ -1,0 +1,53 @@
+{
+  "name": "@mime-browser/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for MIME browser automation - Control browsers through MCP",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "browser",
+    "automation",
+    "puppeteer",
+    "playwright",
+    "mcp",
+    "model-context-protocol",
+    "headless",
+    "chrome",
+    "web-scraping",
+    "testing"
+  ],
+  "author": "Akash Rathod",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akashrtd/mime"
+  },
+  "homepage": "https://github.com/akashrtd/mime#readme",
+  "bugs": {
+    "url": "https://github.com/akashrtd/mime/issues"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

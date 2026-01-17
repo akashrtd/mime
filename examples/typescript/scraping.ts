@@ -1,0 +1,49 @@
+/**
+ * Web Scraping with MIME TypeScript SDK
+ * 
+ * This example demonstrates scraping data from multiple pages
+ */
+
+import { MIME } from '@mime-browser/sdk';
+
+interface Article {
+    title: string;
+    url: string;
+}
+
+async function scrapeHackerNews(): Promise<Article[]> {
+    const browser = await MIME.connect();
+    const articles: Article[] = [];
+
+    try {
+        await browser.navigate('https://news.ycombinator.com');
+
+        // Execute JavaScript to get all titles and links
+        const result = await browser.execute(`
+      return Array.from(document.querySelectorAll('.titleline a')).slice(0, 10).map(a => ({
+        title: a.textContent,
+        url: a.href
+      }));
+    `) as Article[];
+
+        articles.push(...result);
+
+    } finally {
+        await browser.close();
+    }
+
+    return articles;
+}
+
+async function main() {
+    console.log('Scraping Hacker News top 10 articles...\n');
+
+    const articles = await scrapeHackerNews();
+
+    articles.forEach((article, i) => {
+        console.log(`${i + 1}. ${article.title}`);
+        console.log(`   ${article.url}\n`);
+    });
+}
+
+main().catch(console.error);
