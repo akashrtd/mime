@@ -1,5 +1,5 @@
 # Ignore build artifacts
-mime
+/mime
 *.exe
 *.dll
 *.so
