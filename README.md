@@ -8,11 +8,11 @@
 
 ## 🏆 Performance
 
-| Metric | MIME | Puppeteer | Improvement |
-|--------|------|-----------|-------------|
-| **Total** | 1210 ms | 1670 ms | **27% faster** |
-| **Navigation** | 187 ms | 808 ms | **77% faster** |
-| **Extraction** | 2 ms | 17 ms | **88% faster** |
+| Metric         | MIME    | Puppeteer | Improvement    |
+| -------------- | ------- | --------- | -------------- |
+| **Total**      | 1210 ms | 1670 ms   | **27% faster** |
+| **Navigation** | 187 ms  | 808 ms    | **77% faster** |
+| **Extraction** | 2 ms    | 17 ms     | **88% faster** |
 
 ## ✨ Features
 
@@ -23,16 +23,28 @@
 
 ## 🚀 Installation
 
+### Option 1: Pre-built Binary (Recommended)
+
+Download the latest release for your platform from the [Releases](https://github.com/akashrtd/mime/releases) page.
+
+### Option 2: Install via Go
+
 ```bash
 go install github.com/akashrtd/mime/cmd/mime@latest
 ```
 
-Or build from source:
+> **Note:** If you see a "package not found" error, it may be a module cache issue. Try running:
+> `GOPROXY=direct go install github.com/akashrtd/mime/cmd/mime@latest`
+
+### Option 3: Build from Source
+
 ```bash
 git clone https://github.com/akashrtd/mime
 cd mime
-go build -o mime ./cmd/mime
+make install
 ```
+
+You can also use `make build` to create a binary in `./bin/mime` without installing it system-wide.
 
 ## 🤖 MCP Server (AI Integration)
 
@@ -55,21 +67,21 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ### Available MCP Tools
 
-| Tool | Description |
-|------|-------------|
-| `navigate` | Navigate to a URL |
-| `click` | Click an element by CSS selector |
-| `type` | Type text into an element |
-| `extract` | Extract text from an element |
-| `screenshot` | Capture screenshot (base64 PNG) |
-| `execute` | Run JavaScript on the page |
-| `html` | Get page HTML content |
+| Tool         | Description                      |
+| ------------ | -------------------------------- |
+| `navigate`   | Navigate to a URL                |
+| `click`      | Click an element by CSS selector |
+| `type`       | Type text into an element        |
+| `extract`    | Extract text from an element     |
+| `screenshot` | Capture screenshot (base64 PNG)  |
+| `execute`    | Run JavaScript on the page       |
+| `html`       | Get page HTML content            |
 
 ### Example Prompts for Claude
 
-- *"Navigate to https://news.ycombinator.com and extract the top story title"*
-- *"Go to example.com, take a screenshot, and describe what you see"*
-- *"Click the login button and type my email into the form"*
+- _"Navigate to https://news.ycombinator.com and extract the top story title"_
+- _"Go to example.com, take a screenshot, and describe what you see"_
+- _"Click the login button and type my email into the form"_
 
 ## 📖 Go Library Usage
 
@@ -80,7 +92,7 @@ import (
     "context"
     "fmt"
     "log"
-    
+
     "github.com/akashrtd/mime/pkg/mime"
 )
 
@@ -90,7 +102,7 @@ func main() {
         log.Fatal(err)
     }
     defer m.Close()
-    
+
     m.Navigate("https://example.com")
     title, _ := m.Extract("h1")
     fmt.Println(title)
@@ -116,11 +128,11 @@ npm install @mime-browser/sdk
 ```
 
 ```typescript
-import { MIME } from '@mime-browser/sdk';
+import { MIME } from "@mime-browser/sdk";
 
 const browser = await MIME.connect();
-await browser.navigate('https://example.com');
-const title = await browser.extract('h1');
+await browser.navigate("https://example.com");
+const title = await browser.extract("h1");
 await browser.close();
 ```
 
@@ -135,10 +147,22 @@ See [benchmark/RESULTS.md](benchmark/RESULTS.md) for detailed performance compar
 go run benchmark/mime/benchmark.go
 ```
 
+## 📂 Project Structure
+
+```
+mime/
+├── cmd/mime/        # CLI entry point
+├── pkg/mime/        # Core library code
+├── sdk/             # Client SDKs
+├── examples/        # Usage examples
+├── Makefile         # Build commands
+└── go.mod
+```
+
 ## 🗺️ Roadmap
 
 - [x] Core browser automation
-- [x] Simple Go API  
+- [x] Simple Go API
 - [x] CLI tool
 - [x] MCP server integration
 - [x] TypeScript SDK
@@ -153,4 +177,3 @@ MIT License - see [LICENSE](LICENSE)
 
 - [Rod](https://github.com/go-rod/rod) - High-level DevTools Protocol driver
 - [MCP](https://modelcontextprotocol.io) - Model Context Protocol by Anthropic
-

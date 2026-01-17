@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+        exclude:
+          - goos: windows
+            goarch: arm64
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Build Binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          mkdir -p dist
+          BINARY_NAME=mime
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_NAME=mime.exe
+          fi
+          go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" -o dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/mime
+          
+          # Rename for Windows to include .exe if needed, or just keep consistent naming scheme
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            mv dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }} dist/mime-${{ matrix.goos }}-${{ matrix.goarch }}.exe
+          fi
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            dist/*
+          generate_release_notes: true
