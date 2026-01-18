@@ -199,18 +199,17 @@ class MIME {
     const { url } = await this.html();
     return url;
   }
-  async waitFor(selector, timeout = 30000) {
-    const start = Date.now();
-    while (Date.now() - start < timeout) {
-      try {
-        const text = await this.extract(selector);
-        if (text !== undefined) {
-          return;
-        }
-      } catch {}
-      await this.sleep(100);
-    }
-    throw new Error(`Timeout waiting for selector: ${selector}`);
+  async waitFor(selector) {
+    const response = await this.client.callTool("wait_for", { selector });
+    return this.parseResponse(response);
+  }
+  async scroll(selector, x, y) {
+    const response = await this.client.callTool("scroll", { selector, x, y });
+    return this.parseResponse(response);
+  }
+  async hover(selector) {
+    const response = await this.client.callTool("hover", { selector });
+    return this.parseResponse(response);
   }
   async close() {
     await this.client.disconnect();

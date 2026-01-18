@@ -180,8 +180,8 @@ func (b *Browser) Scroll(selector string, x, y int) error {
 		return elem.ScrollIntoView()
 	}
 	// Scroll window by x, y
-	_, err := b.page.Eval(fmt.Sprintf("window.scrollBy(%d, %d)", x, y))
-	return err
+	b.page.Mouse.Scroll(float64(x), float64(y), 0)
+	return nil
 }
 
 // execute script (unchanged)

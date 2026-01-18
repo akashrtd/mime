@@ -12,6 +12,9 @@ import {
     ScreenshotResult,
     ExecuteResult,
     HTMLResult,
+    WaitForResult,
+    ScrollResult,
+    HoverResult,
 } from './types';
 
 /**
@@ -218,20 +221,42 @@ export class MIME {
      * await browser.waitFor('.content-loaded');
      * ```
      */
-    async waitFor(selector: string, timeout = 30000): Promise<void> {
-        const start = Date.now();
-        while (Date.now() - start < timeout) {
-            try {
-                const text = await this.extract(selector);
-                if (text !== undefined) {
-                    return;
-                }
-            } catch {
-                // Element not found, retry
-            }
-            await this.sleep(100);
-        }
-        throw new Error(`Timeout waiting for selector: ${selector}`);
+    async waitFor(selector: string): Promise<WaitForResult> {
+        const response = await this.client.callTool('wait_for', { selector });
+        return this.parseResponse<WaitForResult>(response);
+    }
+
+    /**
+     * Scroll the window or an element
+     * 
+     * @param selector - Optional CSS selector to scroll into view
+     * @param x - Optional pixels to scroll horizontally
+     * @param y - Optional pixels to scroll vertically
+     * 
+     * @example
+     * ```typescript
+     * await browser.scroll('#footer');
+     * await browser.scroll(undefined, 0, 500); // Scroll down 500px
+     * ```
+     */
+    async scroll(selector?: string, x?: number, y?: number): Promise<ScrollResult> {
+        const response = await this.client.callTool('scroll', { selector, x, y });
+        return this.parseResponse<ScrollResult>(response);
+    }
+
+    /**
+     * Hover over an element
+     * 
+     * @param selector - CSS selector of the element to hover
+     * 
+     * @example
+     * ```typescript
+     * await browser.hover('.dropdown-menu');
+     * ```
+     */
+    async hover(selector: string): Promise<HoverResult> {
+        const response = await this.client.callTool('hover', { selector });
+        return this.parseResponse<HoverResult>(response);
     }
 
     /**

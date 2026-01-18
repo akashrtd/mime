@@ -1,7 +1,7 @@
 /**
  * MIME - High-level browser automation API
  */
-import { MIMEOptions, NavigateResult, ClickResult, TypeResult, ScreenshotResult, HTMLResult } from './types';
+import { MIMEOptions, NavigateResult, ClickResult, TypeResult, ScreenshotResult, HTMLResult, WaitForResult, ScrollResult, HoverResult } from './types';
 /**
  * MIME Browser Automation Client
  *
@@ -163,7 +163,32 @@ export declare class MIME {
      * await browser.waitFor('.content-loaded');
      * ```
      */
-    waitFor(selector: string, timeout?: number): Promise<void>;
+    waitFor(selector: string): Promise<WaitForResult>;
+    /**
+     * Scroll the window or an element
+     *
+     * @param selector - Optional CSS selector to scroll into view
+     * @param x - Optional pixels to scroll horizontally
+     * @param y - Optional pixels to scroll vertically
+     *
+     * @example
+     * ```typescript
+     * await browser.scroll('#footer');
+     * await browser.scroll(undefined, 0, 500); // Scroll down 500px
+     * ```
+     */
+    scroll(selector?: string, x?: number, y?: number): Promise<ScrollResult>;
+    /**
+     * Hover over an element
+     *
+     * @param selector - CSS selector of the element to hover
+     *
+     * @example
+     * ```typescript
+     * await browser.hover('.dropdown-menu');
+     * ```
+     */
+    hover(selector: string): Promise<HoverResult>;
     /**
      * Close the browser and disconnect
      *

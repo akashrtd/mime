@@ -2,7 +2,6 @@ package mime
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -19,7 +18,7 @@ type MCPServer struct {
 
 // NavigateInput for navigate tool
 type NavigateInput struct {
-	URL string `json:"url" jsonschema:"required,description=URL to navigate to"`
+	URL string `json:"url"`
 }
 
 // NavigateOutput for navigate tool
@@ -30,7 +29,7 @@ type NavigateOutput struct {
 
 // ClickInput for click tool
 type ClickInput struct {
-	Selector string `json:"selector" jsonschema:"required,description=CSS selector of element to click"`
+	Selector string `json:"selector"`
 }
 
 // ClickOutput for click tool
@@ -41,8 +40,8 @@ type ClickOutput struct {
 
 // TypeInput for type tool
 type TypeInput struct {
-	Selector string `json:"selector" jsonschema:"required,description=CSS selector of element to type into"`
-	Text     string `json:"text" jsonschema:"required,description=Text to type into the element"`
+	Selector string `json:"selector"`
+	Text     string `json:"text"`
 }
 
 // TypeOutput for type tool
@@ -52,7 +51,7 @@ type TypeOutput struct {
 
 // ExtractInput for extract tool
 type ExtractInput struct {
-	Selector string `json:"selector" jsonschema:"required,description=CSS selector of element to extract text from"`
+	Selector string `json:"selector"`
 }
 
 // ExtractOutput for extract tool
@@ -65,18 +64,18 @@ type ScreenshotInput struct{}
 
 // ScreenshotOutput for screenshot tool
 type ScreenshotOutput struct {
-	Screenshot string `json:"screenshot" jsonschema:"description=Base64-encoded PNG screenshot"`
+	Screenshot string `json:"screenshot"`
 	Format     string `json:"format"`
 }
 
 // ExecuteInput for execute tool
 type ExecuteInput struct {
-	Script string `json:"script" jsonschema:"required,description=JavaScript code to execute on the page"`
+	Script string `json:"script"`
 }
 
 // ExecuteOutput for execute tool
 type ExecuteOutput struct {
-	Result string `json:"result"`
+	Result interface{} `json:"result"`
 }
 
 // HTMLInput for html tool (empty - no params needed)
@@ -215,15 +214,7 @@ func (s *MCPServer) registerTools() {
 			if err != nil {
 				return nil, ExecuteOutput{}, fmt.Errorf("execute failed: %w", err)
 			}
-			// Handle result safely if nil
-			var resultStr string
-			if result != nil {
-				resultJSON, _ := json.Marshal(result)
-				resultStr = string(resultJSON)
-			} else {
-				resultStr = "null"
-			}
-			return nil, ExecuteOutput{Result: resultStr}, nil
+			return nil, ExecuteOutput{Result: result}, nil
 		},
 	)
 

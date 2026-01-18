@@ -30,7 +30,7 @@ type Output struct {
 }
 
 func main() {
-	fmt.Println("=== MIME Benchmark ===\n")
+	fmt.Println("=== MIME Benchmark ===")
 
 	results := Results{
 		Startup:    make([]int64, 0, iterations),

@@ -87,6 +87,30 @@ export interface HTMLResult {
 }
 
 /**
+ * Result of a wait_for operation
+ */
+export interface WaitForResult {
+    status: 'success' | 'error';
+    error?: string;
+}
+
+/**
+ * Result of a scroll operation
+ */
+export interface ScrollResult {
+    status: 'success' | 'error';
+    error?: string;
+}
+
+/**
+ * Result of a hover operation
+ */
+export interface HoverResult {
+    status: 'success' | 'error';
+    error?: string;
+}
+
+/**
  * Tool call request for MCP
  */
 export interface ToolCall {
