@@ -23,25 +23,22 @@
 
 ## 🚀 Installation
 
-### Option 1: Pre-built Binary (Recommended)
+> **Note:** This is a private repository. You need repository access to install.
 
-Download the latest release for your platform from the [Releases](https://github.com/akashrtd/mime/releases) page.
+### Option 1: Build from Source (Recommended)
+
+```bash
+git clone git@github.com:akashrtd/mime.git
+cd mime
+make install
+```
 
 ### Option 2: Install via Go
 
 ```bash
+# Requires GOPRIVATE to be set for private repo access
+export GOPRIVATE=github.com/akashrtd/*
 go install github.com/akashrtd/mime/cmd/mime@latest
-```
-
-> **Note:** If you see a "package not found" error, it may be a module cache issue. Try running:
-> `GOPROXY=direct go install github.com/akashrtd/mime/cmd/mime@latest`
-
-### Option 3: Build from Source
-
-```bash
-git clone https://github.com/akashrtd/mime
-cd mime
-make install
 ```
 
 You can also use `make build` to create a binary in `./bin/mime` without installing it system-wide.
