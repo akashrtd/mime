@@ -276,6 +276,171 @@ func (s *MCPServer) registerTools() {
 			return nil, HoverOutput{Status: "success"}, nil
 		},
 	)
+
+	// Markdown tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "markdown",
+			Description: "Get page content as clean markdown (main content only, ideal for LLMs)",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input MarkdownInput) (*mcp.CallToolResult, MarkdownOutput, error) {
+			opts := &MarkdownOptions{OnlyMainContent: !input.FullPage}
+			md, err := s.browser.Markdown(opts)
+			if err != nil {
+				return nil, MarkdownOutput{}, fmt.Errorf("markdown failed: %w", err)
+			}
+			return nil, MarkdownOutput{Markdown: md, URL: s.browser.URL()}, nil
+		},
+	)
+
+	// Metadata tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "metadata",
+			Description: "Extract page metadata (title, description, og tags)",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input struct{}) (*mcp.CallToolResult, MetadataOutput, error) {
+			meta, err := s.browser.Metadata()
+			if err != nil {
+				return nil, MetadataOutput{}, fmt.Errorf("metadata failed: %w", err)
+			}
+			return nil, MetadataOutput{
+				Title:       meta.Title,
+				Description: meta.Description,
+				URL:         meta.URL,
+				Canonical:   meta.Canonical,
+				OG:          meta.OG,
+			}, nil
+		},
+	)
+
+	// Links tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "links",
+			Description: "Extract all links from the page",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input struct{}) (*mcp.CallToolResult, LinksOutput, error) {
+			links, err := s.browser.Links()
+			if err != nil {
+				return nil, LinksOutput{}, fmt.Errorf("links failed: %w", err)
+			}
+			return nil, LinksOutput{Links: links, Count: len(links)}, nil
+		},
+	)
+
+	// Get cookies tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "get_cookies",
+			Description: "Get all cookies for the current page",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input struct{}) (*mcp.CallToolResult, CookiesOutput, error) {
+			cookies, err := s.browser.GetCookies()
+			if err != nil {
+				return nil, CookiesOutput{}, fmt.Errorf("get_cookies failed: %w", err)
+			}
+			// Convert to simpler format
+			simpleCookies := make([]CookieInfo, 0, len(cookies))
+			for _, c := range cookies {
+				simpleCookies = append(simpleCookies, CookieInfo{
+					Name:   c.Name,
+					Value:  c.Value,
+					Domain: c.Domain,
+					Path:   c.Path,
+				})
+			}
+			return nil, CookiesOutput{Cookies: simpleCookies, Count: len(simpleCookies)}, nil
+		},
+	)
+
+	// Clear cookies tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "clear_cookies",
+			Description: "Clear all cookies",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input struct{}) (*mcp.CallToolResult, StatusOutput, error) {
+			if err := s.browser.ClearCookies(); err != nil {
+				return nil, StatusOutput{}, fmt.Errorf("clear_cookies failed: %w", err)
+			}
+			return nil, StatusOutput{Status: "success"}, nil
+		},
+	)
+
+	// Observe tool - AI page understanding
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "observe",
+			Description: "Analyze page structure for AI agents. Returns forms, clickable elements, inputs, and content summary.",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input struct{}) (*mcp.CallToolResult, ObserveOutput, error) {
+			obs, err := s.browser.Observe()
+			if err != nil {
+				return nil, ObserveOutput{}, fmt.Errorf("observe failed: %w", err)
+			}
+			return nil, ObserveOutput{
+				URL:       obs.URL,
+				Title:     obs.Title,
+				Forms:     obs.Forms,
+				Clickable: obs.Clickable,
+				Inputs:    obs.Inputs,
+				Content:   obs.Content,
+			}, nil
+		},
+	)
+
+	// Act tool - Natural language actions
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "act",
+			Description: "Perform action from natural language. Examples: 'click login button', 'type email into username field'",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input ActInput) (*mcp.CallToolResult, ActOutput, error) {
+			result, err := s.browser.Act(input.Instruction)
+			if err != nil {
+				return nil, ActOutput{}, fmt.Errorf("act failed: %w", err)
+			}
+			return nil, ActOutput{
+				Success: result.Success,
+				Action:  result.Action,
+				Target:  result.Target,
+				Message: result.Message,
+			}, nil
+		},
+	)
+
+	// Crawl tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "crawl",
+			Description: "Crawl multiple pages starting from a URL and return markdown content",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input CrawlOptions) (*mcp.CallToolResult, CrawlResult, error) {
+			result, err := s.browser.Crawl(input.URL, &input)
+			if err != nil {
+				return nil, CrawlResult{}, fmt.Errorf("crawl failed: %w", err)
+			}
+			return nil, *result, nil
+		},
+	)
+
+	// Map tool
+	mcp.AddTool(s.server,
+		&mcp.Tool{
+			Name:        "map",
+			Description: "Discover all specific pages on a website (sitemap generation)",
+		},
+		func(ctx context.Context, req *mcp.CallToolRequest, input struct {
+			URL string `json:"url"`
+		}) (*mcp.CallToolResult, MapResult, error) {
+			result, err := s.browser.Map(input.URL)
+			if err != nil {
+				return nil, MapResult{}, fmt.Errorf("map failed: %w", err)
+			}
+			return nil, *result, nil
+		},
+	)
 }
 
 // Run starts the MCP server with the given transport

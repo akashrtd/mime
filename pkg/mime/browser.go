@@ -3,6 +3,7 @@ package mime
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -20,8 +21,25 @@ type Browser struct {
 
 // BrowserOptions configures browser behavior
 type BrowserOptions struct {
-	Headless bool
-	Timeout  time.Duration
+	Headless    bool
+	Timeout     time.Duration
+	UserDataDir string          // Path to persist session data (cookies, localStorage)
+	Stealth     *StealthOptions // Anti-detection configuration
+}
+
+// PageMetadata contains page meta information
+type PageMetadata struct {
+	Title       string            `json:"title"`
+	Description string            `json:"description"`
+	URL         string            `json:"url"`
+	Canonical   string            `json:"canonical,omitempty"`
+	OG          map[string]string `json:"og,omitempty"`
+}
+
+// Link represents a hyperlink on the page
+type Link struct {
+	URL  string `json:"url"`
+	Text string `json:"text"`
 }
 
 // NewBrowser creates a new Browser instance
@@ -35,6 +53,9 @@ func NewBrowser(ctx context.Context, opts *BrowserOptions) (*Browser, error) {
 
 	// Launch browser
 	l := launcher.New().Headless(opts.Headless)
+	if opts.UserDataDir != "" {
+		l = l.UserDataDir(opts.UserDataDir)
+	}
 	url := l.MustLaunch()
 
 	browser := rod.New().ControlURL(url).Context(ctx)
@@ -48,11 +69,19 @@ func NewBrowser(ctx context.Context, opts *BrowserOptions) (*Browser, error) {
 		return nil, fmt.Errorf("failed to create page: %w", err)
 	}
 
-	return &Browser{
+	b := &Browser{
 		browser: browser,
 		page:    page,
 		ctx:     ctx,
-	}, nil
+	}
+
+	if opts.Stealth != nil {
+		if err := b.ApplyStealth(opts.Stealth); err != nil {
+			return nil, fmt.Errorf("failed to apply stealth settings: %w", err)
+		}
+	}
+
+	return b, nil
 }
 
 // getElement resolves a selector to an element, supporting "text=" prefix
@@ -220,4 +249,100 @@ func (b *Browser) Title() (string, error) {
 // Close closes the browser
 func (b *Browser) Close() error {
 	return b.browser.Close()
+}
+
+// GetCookies returns all cookies for the current page
+func (b *Browser) GetCookies() ([]*proto.NetworkCookie, error) {
+	cookies, err := b.page.Cookies(nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get cookies: %w", err)
+	}
+	return cookies, nil
+}
+
+// SetCookies sets cookies for the browser
+func (b *Browser) SetCookies(cookies []*proto.NetworkCookieParam) error {
+	return b.page.SetCookies(cookies)
+}
+
+// ClearCookies clears all cookies
+func (b *Browser) ClearCookies() error {
+	return b.page.SetCookies(nil)
+}
+
+// Metadata extracts page metadata (title, description, og tags)
+func (b *Browser) Metadata() (*PageMetadata, error) {
+	script := `() => {
+		const og = {};
+		document.querySelectorAll('meta[property^="og:"]').forEach(m => {
+			const key = m.getAttribute('property').replace('og:', '');
+			og[key] = m.content;
+		});
+		return {
+			title: document.title || '',
+			description: document.querySelector('meta[name="description"]')?.content || '',
+			canonical: document.querySelector('link[rel="canonical"]')?.href || '',
+			og: og
+		};
+	}`
+
+	result, err := b.page.Eval(script)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract metadata: %w", err)
+	}
+
+	meta := &PageMetadata{
+		URL: b.URL(),
+	}
+
+	// Use JSON for type-safe conversion
+	jsonBytes, err := result.Value.MarshalJSON()
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal metadata: %w", err)
+	}
+
+	var data struct {
+		Title       string            `json:"title"`
+		Description string            `json:"description"`
+		Canonical   string            `json:"canonical"`
+		OG          map[string]string `json:"og"`
+	}
+	if err := json.Unmarshal(jsonBytes, &data); err != nil {
+		return nil, fmt.Errorf("failed to parse metadata: %w", err)
+	}
+
+	meta.Title = data.Title
+	meta.Description = data.Description
+	meta.Canonical = data.Canonical
+	meta.OG = data.OG
+
+	return meta, nil
+}
+
+// Links extracts all links from the current page
+func (b *Browser) Links() ([]Link, error) {
+	script := `() => {
+		return [...document.querySelectorAll('a[href]')].map(a => ({
+			url: a.href,
+			text: a.textContent.trim().slice(0, 200)
+		})).filter(l => l.url.startsWith('http'));
+	}`
+
+	result, err := b.page.Eval(script)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract links: %w", err)
+	}
+
+	// Use JSON for type-safe conversion
+	jsonBytes, err := result.Value.MarshalJSON()
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal links: %w", err)
+	}
+
+	var links []Link
+	if err := json.Unmarshal(jsonBytes, &links); err != nil {
+		return nil, fmt.Errorf("failed to parse links: %w", err)
+	}
+
+	return links, nil
 }

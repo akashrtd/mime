@@ -135,6 +135,110 @@
                 "type": "object",
                 "properties": {}
             }
+        },
+        {
+            "name": "markdown",
+            "description": "Get page content as Markdown",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        },
+        {
+            "name": "metadata",
+            "description": "Extract page metadata",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        },
+        {
+            "name": "links",
+            "description": "Extract all links",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        },
+        {
+            "name": "get_cookies",
+            "description": "Get all cookies",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        },
+        {
+            "name": "clear_cookies",
+            "description": "Clear all cookies",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        },
+        {
+            "name": "observe",
+            "description": "Analyze page structure for AI agents",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
+            }
+        },
+        {
+            "name": "act",
+            "description": "Perform action from natural language",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "instruction": {
+                        "type": "string",
+                        "description": "Natural language instruction (e.g. 'click login')"
+                    }
+                },
+                "required": [
+                    "instruction"
+                ]
+            }
+        },
+        {
+            "name": "crawl",
+            "description": "Crawl multiple pages",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "Starting URL"
+                    },
+                    "max_pages": {
+                        "type": "integer",
+                        "description": "Maximum pages to crawl"
+                    },
+                    "max_depth": {
+                        "type": "integer",
+                        "description": "Maximum depth"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            }
+        },
+        {
+            "name": "map",
+            "description": "Map site structure",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "URL to map"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            }
         }
     ],
     "categories": [

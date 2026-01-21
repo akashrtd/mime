@@ -214,6 +214,42 @@ class MIME {
   async close() {
     await this.client.disconnect();
   }
+  async markdown(fullPage = false) {
+    const response = await this.client.callTool("markdown", { full_page: fullPage });
+    return this.parseResponse(response);
+  }
+  async metadata() {
+    const response = await this.client.callTool("metadata", {});
+    return this.parseResponse(response);
+  }
+  async links() {
+    const response = await this.client.callTool("links", {});
+    return this.parseResponse(response);
+  }
+  async getCookies() {
+    const response = await this.client.callTool("get_cookies", {});
+    return this.parseResponse(response);
+  }
+  async clearCookies() {
+    const response = await this.client.callTool("clear_cookies", {});
+    return this.parseResponse(response);
+  }
+  async observe() {
+    const response = await this.client.callTool("observe", {});
+    return this.parseResponse(response);
+  }
+  async act(instruction) {
+    const response = await this.client.callTool("act", { instruction });
+    return this.parseResponse(response);
+  }
+  async crawl(url, options = {}) {
+    const response = await this.client.callTool("crawl", { url, ...options });
+    return this.parseResponse(response);
+  }
+  async map(url) {
+    const response = await this.client.callTool("map", { url });
+    return this.parseResponse(response);
+  }
   isConnected() {
     return this.client.isConnected();
   }

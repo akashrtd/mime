@@ -64,24 +64,35 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ### Available MCP Tools
 
-| Tool         | Description                      |
-| ------------ | -------------------------------- |
-| `navigate`   | Navigate to a URL                |
-| `click`      | Click an element by CSS selector |
-| `type`       | Type text into an element        |
-| `extract`    | Extract text from an element     |
-| `screenshot` | Capture screenshot (base64 PNG)  |
-| `execute`    | Run JavaScript on the page       |
-| `html`       | Get page HTML content            |
-| `wait_for`   | Wait for element (text/css)      |
-| `scroll`     | Scroll to element or position    |
-| `hover`      | Hover over an element            |
+| Tool            | Description                      |
+| --------------- | -------------------------------- |
+| `navigate`      | Navigate to a URL                |
+| `click`         | Click an element by CSS selector |
+| `type`          | Type text into an element        |
+| `extract`       | Extract text from an element     |
+| `screenshot`    | Capture screenshot (base64 PNG)  |
+| `execute`       | Run JavaScript on the page       |
+| `html`          | Get page HTML content            |
+| `wait_for`      | Wait for element (text/css)      |
+| `scroll`        | Scroll to element or position    |
+| `hover`         | Hover over an element            |
+| `markdown`      | Get page content as Markdown     |
+| `metadata`      | Extract page metadata            |
+| `links`         | Extract all links                |
+| `get_cookies`   | Get all cookies                  |
+| `clear_cookies` | Clear all cookies                |
+| `observe`       | Analyze page for AI agents       |
+| `act`           | Natural language actions         |
+| `crawl`         | Multi-page crawl                 |
+| `map`           | Site structure mapping           |
 
 ### Example Prompts for Claude
 
 - _"Navigate to https://news.ycombinator.com and extract the top story title"_
 - _"Go to example.com, take a screenshot, and describe what you see"_
 - _"Click the login button and type my email into the form"_
+- _"Observe the page and tell me what forms are available"_
+- _"Crawl https://example.com and save the markdown to a file"_
 
 ## 📖 Go Library Usage
 
@@ -117,6 +128,9 @@ mime serve
 
 # Start with visible browser (debug mode)
 mime serve --visible
+
+# Start with stealth mode enabled
+mime serve --stealth
 
 
 # Show version
@@ -186,8 +200,13 @@ make test
 - [x] MCP server integration
 - [x] TypeScript SDK
 - [x] CI/CD & Automated Releases
-- [ ] Connection pooling
-- [ ] Retry logic
+- [x] Session Persistence
+- [x] Markdown & Metadata
+- [x] AI Agent Tools (Observe, Act)
+- [x] Multi-Page (Crawl, Map)
+- [x] Connection pooling (Library)
+- [x] Retry logic
+- [x] Stealth Mode (Anti-detection)
 
 ## 📄 License
 

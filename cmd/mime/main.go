@@ -21,6 +21,7 @@ var rootCmd = &cobra.Command{
 }
 
 var visible bool
+var stealth bool
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
@@ -56,6 +57,10 @@ Configure in Claude Desktop:
 		opts := &mime.BrowserOptions{
 			Headless: !visible,
 		}
+		if stealth {
+			fmt.Fprintln(os.Stderr, "Stealth mode enabled")
+			opts.Stealth = mime.DefaultStealthOptions()
+		}
 
 		server, err := mime.NewMCPServer(ctx, opts)
 		if err != nil {
@@ -87,6 +92,7 @@ var versionCmd = &cobra.Command{
 
 func init() {
 	serveCmd.Flags().BoolVar(&visible, "visible", false, "Show browser window (debug mode)")
+	serveCmd.Flags().BoolVar(&stealth, "stealth", false, "Enable stealth mode (anti-detection)")
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(versionCmd)
 }

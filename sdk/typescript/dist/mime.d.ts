@@ -1,7 +1,7 @@
 /**
  * MIME - High-level browser automation API
  */
-import { MIMEOptions, NavigateResult, ClickResult, TypeResult, ScreenshotResult, HTMLResult, WaitForResult, ScrollResult, HoverResult } from './types';
+import { MIMEOptions, NavigateResult, ClickResult, TypeResult, ScreenshotResult, HTMLResult, WaitForResult, ScrollResult, HoverResult, ObserveResult, ActResult, CrawlResult, CrawlOptions, MapResult } from './types';
 /**
  * MIME Browser Automation Client
  *
@@ -198,6 +198,144 @@ export declare class MIME {
      * ```
      */
     close(): Promise<void>;
+    /**
+     * Get page content as clean markdown (ideal for LLMs)
+     *
+     * @param fullPage - If true, includes full page; otherwise main content only
+     * @returns Markdown content and URL
+     *
+     * @example
+     * ```typescript
+     * const { markdown } = await browser.markdown();
+     * console.log(markdown);
+     * ```
+     */
+    markdown(fullPage?: boolean): Promise<{
+        markdown: string;
+        url: string;
+    }>;
+    /**
+     * Extract page metadata (title, description, og tags)
+     *
+     * @returns Page metadata
+     *
+     * @example
+     * ```typescript
+     * const meta = await browser.metadata();
+     * console.log(meta.title, meta.description);
+     * ```
+     */
+    metadata(): Promise<{
+        title: string;
+        description: string;
+        url: string;
+        canonical?: string;
+        og?: Record<string, string>;
+    }>;
+    /**
+     * Extract all links from the page
+     *
+     * @returns Array of links with URL and text
+     *
+     * @example
+     * ```typescript
+     * const { links } = await browser.links();
+     * links.forEach(link => console.log(link.url, link.text));
+     * ```
+     */
+    links(): Promise<{
+        links: Array<{
+            url: string;
+            text: string;
+        }>;
+        count: number;
+    }>;
+    /**
+     * Get all cookies for the current page
+     *
+     * @returns Array of cookies
+     *
+     * @example
+     * ```typescript
+     * const { cookies } = await browser.getCookies();
+     * console.log(`Found ${cookies.length} cookies`);
+     * ```
+     */
+    getCookies(): Promise<{
+        cookies: Array<{
+            name: string;
+            value: string;
+            domain: string;
+            path: string;
+        }>;
+        count: number;
+    }>;
+    /**
+     * Clear all cookies
+     *
+     * @example
+     * ```typescript
+     * await browser.clearCookies();
+     * ```
+     */
+    clearCookies(): Promise<{
+        status: string;
+    }>;
+    /**
+     * Analyze page structure for AI understanding
+     *
+     * Returns forms, clickable elements, inputs, and content summary.
+     * This is the key tool for AI agents to understand what's on a page.
+     *
+     * @example
+     * ```typescript
+     * const obs = await browser.observe();
+     * console.log('Forms:', obs.forms.length);
+     * console.log('Clickable:', obs.clickable.map(c => c.text));
+     * ```
+     */
+    observe(): Promise<ObserveResult>;
+    /**
+     * Perform action from natural language instruction
+     *
+     * @param instruction - Natural language instruction like "click login button"
+     * @returns Result with success status and action taken
+     *
+     * @example
+     * ```typescript
+     * await browser.act('click the login button');
+     * await browser.act('type hello into the search field');
+     * await browser.act('scroll to pricing');
+     * ```
+     */
+    act(instruction: string): Promise<ActResult>;
+    /**
+     * Crawl multiple pages starting from a URL
+     *
+     * @param url - Starting URL
+     * @param options - Crawl options (max_pages, max_depth, etc.)
+     * @returns Crawl result with content of all visited pages
+     *
+     * @example
+     * ```typescript
+     * const result = await browser.crawl('https://example.com', { max_pages: 5 });
+     * console.log(`Crawled ${result.total} pages`);
+     * ```
+     */
+    crawl(url: string, options?: Omit<CrawlOptions, 'url'>): Promise<CrawlResult>;
+    /**
+     * Map a website structure (discover URLs)
+     *
+     * @param url - URL to map
+     * @returns List of discovered URLs
+     *
+     * @example
+     * ```typescript
+     * const result = await browser.map('https://example.com');
+     * console.log(`Found ${result.total} links`);
+     * ```
+     */
+    map(url: string): Promise<MapResult>;
     /**
      * Check if connected to the MIME server
      */

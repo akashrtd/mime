@@ -15,6 +15,18 @@ import {
     WaitForResult,
     ScrollResult,
     HoverResult,
+    MarkdownResult,
+    MetadataResult,
+    Link,
+    LinksResult,
+    Cookie,
+    CookiesResult,
+    StatusResult,
+    ObserveResult,
+    ActResult,
+    CrawlResult,
+    CrawlOptions,
+    MapResult
 } from './types';
 
 /**
@@ -269,6 +281,164 @@ export class MIME {
      */
     async close(): Promise<void> {
         await this.client.disconnect();
+    }
+
+    /**
+     * Get page content as clean markdown (ideal for LLMs)
+     * 
+     * @param fullPage - If true, includes full page; otherwise main content only
+     * @returns Markdown content and URL
+     * 
+     * @example
+     * ```typescript
+     * const { markdown } = await browser.markdown();
+     * console.log(markdown);
+     * ```
+     */
+    async markdown(fullPage = false): Promise<{ markdown: string; url: string }> {
+        const response = await this.client.callTool('markdown', { full_page: fullPage });
+        return this.parseResponse<{ markdown: string; url: string }>(response);
+    }
+
+    /**
+     * Extract page metadata (title, description, og tags)
+     * 
+     * @returns Page metadata
+     * 
+     * @example
+     * ```typescript
+     * const meta = await browser.metadata();
+     * console.log(meta.title, meta.description);
+     * ```
+     */
+    async metadata(): Promise<{
+        title: string;
+        description: string;
+        url: string;
+        canonical?: string;
+        og?: Record<string, string>;
+    }> {
+        const response = await this.client.callTool('metadata', {});
+        return this.parseResponse(response);
+    }
+
+    /**
+     * Extract all links from the page
+     * 
+     * @returns Array of links with URL and text
+     * 
+     * @example
+     * ```typescript
+     * const { links } = await browser.links();
+     * links.forEach(link => console.log(link.url, link.text));
+     * ```
+     */
+    async links(): Promise<{ links: Array<{ url: string; text: string }>; count: number }> {
+        const response = await this.client.callTool('links', {});
+        return this.parseResponse(response);
+    }
+
+    /**
+     * Get all cookies for the current page
+     * 
+     * @returns Array of cookies
+     * 
+     * @example
+     * ```typescript
+     * const { cookies } = await browser.getCookies();
+     * console.log(`Found ${cookies.length} cookies`);
+     * ```
+     */
+    async getCookies(): Promise<{
+        cookies: Array<{ name: string; value: string; domain: string; path: string }>;
+        count: number;
+    }> {
+        const response = await this.client.callTool('get_cookies', {});
+        return this.parseResponse(response);
+    }
+
+    /**
+     * Clear all cookies
+     * 
+     * @example
+     * ```typescript
+     * await browser.clearCookies();
+     * ```
+     */
+    async clearCookies(): Promise<{ status: string }> {
+        const response = await this.client.callTool('clear_cookies', {});
+        return this.parseResponse(response);
+    }
+
+    /**
+     * Analyze page structure for AI understanding
+     * 
+     * Returns forms, clickable elements, inputs, and content summary.
+     * This is the key tool for AI agents to understand what's on a page.
+     * 
+     * @example
+     * ```typescript
+     * const obs = await browser.observe();
+     * console.log('Forms:', obs.forms.length);
+     * console.log('Clickable:', obs.clickable.map(c => c.text));
+     * ```
+     */
+    async observe(): Promise<ObserveResult> {
+        const response = await this.client.callTool('observe', {});
+        return this.parseResponse(response);
+    }
+
+    /**
+     * Perform action from natural language instruction
+     * 
+     * @param instruction - Natural language instruction like "click login button"
+     * @returns Result with success status and action taken
+     * 
+     * @example
+     * ```typescript
+     * await browser.act('click the login button');
+     * await browser.act('type hello into the search field');
+     * await browser.act('scroll to pricing');
+     * ```
+     */
+    async act(instruction: string): Promise<ActResult> {
+        const response = await this.client.callTool('act', { instruction });
+        return this.parseResponse(response);
+    }
+
+    /**
+     * Crawl multiple pages starting from a URL
+     * 
+     * @param url - Starting URL
+     * @param options - Crawl options (max_pages, max_depth, etc.)
+     * @returns Crawl result with content of all visited pages
+     * 
+     * @example
+     * ```typescript
+     * const result = await browser.crawl('https://example.com', { max_pages: 5 });
+     * console.log(`Crawled ${result.total} pages`);
+     * ```
+     */
+    async crawl(url: string, options: Omit<CrawlOptions, 'url'> = {}): Promise<CrawlResult> {
+        const response = await this.client.callTool('crawl', { url, ...options });
+        return this.parseResponse(response);
+    }
+
+    /**
+     * Map a website structure (discover URLs)
+     * 
+     * @param url - URL to map
+     * @returns List of discovered URLs
+     * 
+     * @example
+     * ```typescript
+     * const result = await browser.map('https://example.com');
+     * console.log(`Found ${result.total} links`);
+     * ```
+     */
+    async map(url: string): Promise<MapResult> {
+        const response = await this.client.callTool('map', { url });
+        return this.parseResponse(response);
     }
 
     /**
