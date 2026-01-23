@@ -12,7 +12,9 @@ interface Article {
 }
 
 async function scrapeHackerNews(): Promise<Article[]> {
-    const browser = await MIME.connect();
+    // Use absolute path to binary since it's not in PATH
+    const mimePath = process.env.MIME_PATH || '/Users/akashrathod/Desktop/projects/mime/bin/mime';
+    const browser = await MIME.connect({ binaryPath: mimePath });
     const articles: Article[] = [];
 
     try {
