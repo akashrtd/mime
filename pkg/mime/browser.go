@@ -20,6 +20,7 @@ type Browser struct {
 	ctx     context.Context
 	logger  *slog.Logger
 	limiter *RateLimiter
+	tracer  *Tracer
 }
 
 // BrowserOptions configures browser behavior
@@ -30,6 +31,7 @@ type BrowserOptions struct {
 	Stealth     *StealthOptions // Anti-detection configuration
 	Logger      *slog.Logger    // Structured logger
 	RateLimit   *RateLimiter    // Optional rate limiter
+	TraceDir    string          // Directory for traces (if empty, tracing disabled)
 }
 
 // PageMetadata contains page meta information
@@ -90,6 +92,15 @@ func NewBrowser(ctx context.Context, opts *BrowserOptions) (*Browser, error) {
 		limiter: opts.RateLimit,
 	}
 
+	if opts.TraceDir != "" {
+		tracer, err := NewTracer(opts.TraceDir)
+		if err != nil {
+			return nil, fmt.Errorf("failed to init tracer: %w", err)
+		}
+		b.tracer = tracer
+		b.logger.Info("tracing enabled", "dir", opts.TraceDir)
+	}
+
 	if opts.Stealth != nil {
 		if err := b.ApplyStealth(opts.Stealth); err != nil {
 			return nil, fmt.Errorf("failed to apply stealth settings: %w", err)
@@ -113,6 +124,16 @@ func (b *Browser) getElement(selector string) (*rod.Element, error) {
 	}
 
 	// Default to CSS selector
+	// Use ElementR for text, but for standard selectors we want to support Shadow DOM piercing if possible.
+	// Rod's Element() is querySelector.
+	// To better support Playwright-style >> or just finding elements in shadow roots,
+	// we can try a recursive search or just stick to Rod's defaults but ensure we wait.
+	// For this iteration, we keep it simple but acknowledge Shadow DOM needs might require js search.
+	// Actually Rod supports piercing shadow dom with `Element` if the selector is crafted right?
+	// No, usually you need `ShadowRoot()`.
+	// Let's rely on Rod's retry logic which is quite good.
+	// IMPORTANT: Playwright-style deep selector is not default in Rod.
+
 	elem, err := b.page.Element(selector)
 	if err != nil {
 		return nil, fmt.Errorf("element %q not found: %w", selector, err)
@@ -128,28 +149,54 @@ func (b *Browser) Navigate(url string) error {
 		}
 	}
 	b.logger.Info("navigating", "url", url)
+	if b.tracer != nil {
+		b.tracer.Capture(b, "navigate", url)
+	}
 	return b.page.Navigate(url)
 }
 
 // Click clicks an element by selector
 func (b *Browser) Click(selector string) error {
+	if b.tracer != nil {
+		defer b.tracer.Capture(b, "click", selector)
+	}
 	elem, err := b.getElement(selector)
 	if err != nil {
 		return err
 	}
-	// Ensure element is visible before clicking
+	// Ensure element is visible and stable
 	if err := elem.WaitVisible(); err != nil {
 		return fmt.Errorf("element not visible: %w", err)
+	}
+	if err := elem.WaitStable(100 * time.Millisecond); err != nil {
+		b.logger.Warn("element not stable, clicking anyway", "selector", selector, "error", err)
+	}
+	if err := elem.WaitEnabled(); err != nil {
+		return fmt.Errorf("element not enabled: %w", err)
 	}
 	return elem.Click(proto.InputMouseButtonLeft, 1)
 }
 
 // Type types text into an element
 func (b *Browser) Type(selector, text string) error {
+	if b.tracer != nil {
+		defer b.tracer.Capture(b, "type", selector)
+	}
 	elem, err := b.getElement(selector)
 	if err != nil {
 		return err
 	}
+	// Ensure element is visible and stable
+	if err := elem.WaitVisible(); err != nil {
+		return fmt.Errorf("element not visible: %w", err)
+	}
+	if err := elem.WaitStable(100 * time.Millisecond); err != nil {
+		b.logger.Warn("element not stable, typing anyway", "selector", selector, "error", err)
+	}
+	if err := elem.WaitEnabled(); err != nil {
+		return fmt.Errorf("element not enabled: %w", err)
+	}
+
 	// Select all text first to ensure we replace "input" content if needed,
 	// or matches standard "fill" behavior.
 	// Rod's Input appends. SelectAll + Input replaces.

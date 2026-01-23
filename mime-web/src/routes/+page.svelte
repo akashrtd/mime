@@ -72,52 +72,27 @@
 		</div>
 
 		<!-- Interactive Terminal Visualization -->
+		<!-- Video Visualization -->
 		<div class="group perspective-1000 relative lg:translate-x-10">
 			<!-- Glitchy background effect -->
 			<div
-				class="absolute inset-0 bg-[#0040DD] opacity-10 blur-3xl transition-opacity duration-1000 group-hover:opacity-20"
+				class="absolute inset-0 bg-[#0040DD] opacity-20 blur-3xl transition-opacity duration-1000 group-hover:opacity-30"
 			></div>
 
 			<div
-				class="relative z-10 skew-y-1 rounded-xl border border-gray-800 bg-[#0A0A0A] p-8 shadow-2xl transition-all duration-700 ease-out group-hover:skew-y-0"
+				class="relative z-10 skew-y-1 overflow-hidden rounded-xl border border-gray-800 bg-[#0A0A0A] shadow-2xl transition-all duration-700 ease-out group-hover:skew-y-0"
 			>
-				<div class="mb-6 flex items-center justify-between">
-					<div class="flex gap-2.5">
-						<div class="h-3.5 w-3.5 rounded-full bg-[#FF5F56]"></div>
-						<div class="h-3.5 w-3.5 rounded-full bg-[#FFBD2E]"></div>
-						<div class="h-3.5 w-3.5 rounded-full bg-[#27C93F]"></div>
-					</div>
-					<div class="font-mono text-xs text-gray-600">zsh — 80x24</div>
-				</div>
-
-				<div class="space-y-3 font-mono text-sm leading-relaxed">
-					<div class="mb-4 flex items-center gap-3 border-b border-gray-800 pb-2">
-						<span class="font-bold text-green-400">➜</span>
-						<span class="font-bold text-blue-400">~</span>
-						<span class="typing-effect text-gray-100">ensemble recommend "pet food"</span>
-					</div>
-
-					<div class="space-y-2 opacity-90">
-						<p class="text-gray-400">🚀 Starting workflow: product-recommendation...</p>
-						<p class="border-l-2 border-blue-500/30 pl-4">
-							<span class="font-bold text-blue-400">[Navigator]</span> Identifying top products...
-						</p>
-						<p class="animate-pulse border-l-2 border-yellow-500/30 pl-4">
-							<span class="font-bold text-yellow-400">[MIME]</span> Navigating to amazon.com...
-							<span class="ml-2 text-xs text-gray-600">headless: true</span>
-						</p>
-						<p class="border-l-2 border-yellow-500/30 pl-4">
-							<span class="font-bold text-yellow-400">[MIME]</span>
-							<span class="text-green-400">Done.</span> Extracted 12 price points.
-						</p>
-						<p class="border-l-2 border-purple-500/30 pl-4">
-							<span class="font-bold text-purple-400">[Analyst]</span> Computing unit economics (PPU)...
-						</p>
-						<p class="mt-4 font-bold text-green-400">
-							✅ Recommendation: Hill's Science Diet (Subscription)
-						</p>
-					</div>
-				</div>
+                <video 
+                    src="/video_tui.mp4" 
+                    autoplay 
+                    muted 
+                    loop 
+                    playsinline
+                    class="w-full h-auto object-cover opacity-90"
+                ></video>
+                
+                <!-- Overlay Gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent opacity-50"></div>
 			</div>
 		</div>
 	</header>
