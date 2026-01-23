@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -17,6 +18,8 @@ type Browser struct {
 	browser *rod.Browser
 	page    *rod.Page
 	ctx     context.Context
+	logger  *slog.Logger
+	limiter *RateLimiter
 }
 
 // BrowserOptions configures browser behavior
@@ -25,6 +28,8 @@ type BrowserOptions struct {
 	Timeout     time.Duration
 	UserDataDir string          // Path to persist session data (cookies, localStorage)
 	Stealth     *StealthOptions // Anti-detection configuration
+	Logger      *slog.Logger    // Structured logger
+	RateLimit   *RateLimiter    // Optional rate limiter
 }
 
 // PageMetadata contains page meta information
@@ -58,6 +63,14 @@ func NewBrowser(ctx context.Context, opts *BrowserOptions) (*Browser, error) {
 	}
 	url := l.MustLaunch()
 
+	// Setup logger
+	logger := opts.Logger
+	if logger == nil {
+		logger = slog.Default()
+	}
+
+	logger.Debug("launching browser", "headless", opts.Headless, "userDataDir", opts.UserDataDir)
+
 	browser := rod.New().ControlURL(url).Context(ctx)
 	if err := browser.Connect(); err != nil {
 		return nil, fmt.Errorf("failed to connect to browser: %w", err)
@@ -73,6 +86,8 @@ func NewBrowser(ctx context.Context, opts *BrowserOptions) (*Browser, error) {
 		browser: browser,
 		page:    page,
 		ctx:     ctx,
+		logger:  logger,
+		limiter: opts.RateLimit,
 	}
 
 	if opts.Stealth != nil {
@@ -107,6 +122,12 @@ func (b *Browser) getElement(selector string) (*rod.Element, error) {
 
 // Navigate navigates to a URL
 func (b *Browser) Navigate(url string) error {
+	if b.limiter != nil {
+		if err := b.limiter.Wait(b.ctx); err != nil {
+			return fmt.Errorf("rate limit wait failed: %w", err)
+		}
+	}
+	b.logger.Info("navigating", "url", url)
 	return b.page.Navigate(url)
 }
 
@@ -215,6 +236,11 @@ func (b *Browser) Scroll(selector string, x, y int) error {
 
 // execute script (unchanged)
 func (b *Browser) Execute(script string) (interface{}, error) {
+	if b.limiter != nil {
+		if err := b.limiter.Wait(b.ctx); err != nil {
+			return nil, fmt.Errorf("rate limit wait failed: %w", err)
+		}
+	}
 	result, err := b.page.Eval(script)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute script: %w", err)

@@ -3,6 +3,7 @@ package mime
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"sync"
 )
 
@@ -12,6 +13,7 @@ type BrowserPool struct {
 	mu       sync.Mutex
 	maxSize  int
 	opts     *BrowserOptions
+	logger   *slog.Logger
 }
 
 // NewBrowserPool creates a new browser pool
@@ -20,10 +22,16 @@ func NewBrowserPool(ctx context.Context, size int, opts *BrowserOptions) (*Brows
 		size = 1
 	}
 
+	logger := slog.Default()
+	if opts != nil && opts.Logger != nil {
+		logger = opts.Logger
+	}
+
 	pool := &BrowserPool{
 		browsers: make([]*Browser, 0, size),
 		maxSize:  size,
 		opts:     opts,
+		logger:   logger,
 	}
 
 	// Pre-warm with one browser
@@ -55,6 +63,7 @@ func (p *BrowserPool) Get(ctx context.Context) (*Browser, error) {
 	}
 
 	// Pool empty, create new
+	p.logger.Debug("creating new browser for pool")
 	return NewBrowser(ctx, p.opts)
 }
 
@@ -67,6 +76,7 @@ func (p *BrowserPool) Put(br *Browser) {
 		p.browsers = append(p.browsers, br)
 	} else {
 		// Pool full, close the browser
+		p.logger.Debug("pool full, closing browser")
 		go br.Close()
 	}
 }

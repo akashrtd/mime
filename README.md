@@ -204,8 +204,8 @@ make test
 - [x] Markdown & Metadata
 - [x] AI Agent Tools (Observe, Act)
 - [x] Multi-Page (Crawl, Map)
-- [x] Connection pooling (Library)
-- [x] Retry logic
+- [x] Connection pooling (Library) - Implemented in `pkg/mime/pool.go`
+- [x] Retry logic - Implemented in `pkg/mime/retry.go`
 - [x] Stealth Mode (Anti-detection)
 
 ## 📄 License

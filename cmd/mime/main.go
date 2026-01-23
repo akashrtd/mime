@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,6 +23,8 @@ var rootCmd = &cobra.Command{
 
 var visible bool
 var stealth bool
+var jsonLog bool
+var debug bool
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
@@ -51,14 +54,31 @@ Configure in Claude Desktop:
 			cancel()
 		}()
 
+		// Setup logger
+		var handler slog.Handler
+		optsLog := &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		}
+		if debug {
+			optsLog.Level = slog.LevelDebug
+		}
+		if jsonLog {
+			handler = slog.NewJSONHandler(os.Stderr, optsLog)
+		} else {
+			handler = slog.NewTextHandler(os.Stderr, optsLog)
+		}
+		logger := slog.New(handler)
+		slog.SetDefault(logger)
+
 		// Create MCP server
-		fmt.Fprintf(os.Stderr, "Starting MIME MCP server (visible=%v)...\n", visible)
+		logger.Info("Starting MIME MCP server", "visible", visible, "stealth", stealth)
 
 		opts := &mime.BrowserOptions{
 			Headless: !visible,
+			Logger:   logger,
 		}
 		if stealth {
-			fmt.Fprintln(os.Stderr, "Stealth mode enabled")
+			logger.Info("Stealth mode enabled")
 			opts.Stealth = mime.DefaultStealthOptions()
 		}
 
@@ -68,7 +88,7 @@ Configure in Claude Desktop:
 		}
 		defer server.Close()
 
-		fmt.Fprintln(os.Stderr, "MIME MCP server ready. Accepting connections via stdio.")
+		logger.Info("MIME MCP server ready. Accepting connections via stdio.")
 
 		// Create StdIO transport and run
 		transport := &mcpsdk.StdioTransport{}
@@ -93,6 +113,8 @@ var versionCmd = &cobra.Command{
 func init() {
 	serveCmd.Flags().BoolVar(&visible, "visible", false, "Show browser window (debug mode)")
 	serveCmd.Flags().BoolVar(&stealth, "stealth", false, "Enable stealth mode (anti-detection)")
+	serveCmd.Flags().BoolVar(&jsonLog, "json", false, "Enable JSON logging")
+	serveCmd.Flags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(versionCmd)
 }
