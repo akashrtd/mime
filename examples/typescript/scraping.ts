@@ -14,7 +14,7 @@ interface Article {
 
 async function scrapeHackerNews(): Promise<Article[]> {
     // Use relative path to binary or environment variable
-    const mimePath = process.env.MIME_PATH || path.resolve(process.cwd(), '../../../bin/mime');
+    const mimePath = path.resolve(process.cwd(), 'bin/mime');
     const browser = await MIME.connect({ binaryPath: mimePath });
     const articles: Article[] = [];
 
