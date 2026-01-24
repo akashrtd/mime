@@ -78,27 +78,27 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ### Available MCP Tools
 
-| Tool            | Description                      |
-| --------------- | -------------------------------- |
-| `navigate`      | Navigate to a URL                |
-| `click`         | Click an element by CSS selector |
-| `type`          | Type text into an element        |
-| `extract`       | Extract text from an element     |
-| `screenshot`    | Capture screenshot (base64 PNG)  |
-| `execute`       | Run JavaScript on the page       |
-| `html`          | Get page HTML content            |
-| `wait_for`      | Wait for element (text/css)      |
-| `scroll`        | Scroll to element or position    |
-| `hover`         | Hover over an element            |
-| `markdown`      | Get page content as Markdown     |
-| `metadata`      | Extract page metadata            |
-| `links`         | Extract all links                |
-| `get_cookies`   | Get all cookies                  |
-| `clear_cookies` | Clear all cookies                |
-| `observe`       | Analyze page for AI agents       |
-| `act`           | Natural language actions         |
-| `crawl`         | Multi-page crawl                 |
-| `map`           | Site structure mapping           |
+| Tool            | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| `navigate`      | Navigate to a URL                                           |
+| `click`         | Click an element by CSS selector                            |
+| `type`          | Type text into an element                                   |
+| `extract`       | Extract text from an element                                |
+| `screenshot`    | Capture screenshot (PNG/JPEG). Options: `format`, `quality` |
+| `execute`       | Run JavaScript on the page                                  |
+| `html`          | Get page HTML content                                       |
+| `wait_for`      | Wait for element (text/css)                                 |
+| `scroll`        | Scroll to element or position                               |
+| `hover`         | Hover over an element                                       |
+| `markdown`      | Get page content as Markdown                                |
+| `metadata`      | Extract page metadata                                       |
+| `links`         | Extract all links                                           |
+| `get_cookies`   | Get all cookies                                             |
+| `clear_cookies` | Clear all cookies                                           |
+| `observe`       | Analyze page for AI agents                                  |
+| `act`           | Natural language actions                                    |
+| `crawl`         | Multi-page crawl                                            |
+| `map`           | Site structure mapping                                      |
 
 ### Example Prompts for Claude
 
