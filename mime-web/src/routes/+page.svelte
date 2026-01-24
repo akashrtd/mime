@@ -37,7 +37,7 @@
 >
   <!-- Navbar -->
   <nav
-    class="fixed top-0 z-50 flex w-full items-center justify-between border-b border-[#0040DD]/10 bg-white/90 px-6 py-6 backdrop-blur-md supports-[backdrop-filter]:bg-white/60 lg:px-12"
+    class="fixed top-0 z-50 flex w-full items-center justify-between border-b border-[#0040DD]/10 bg-white/90 px-6 py-4 backdrop-blur-md supports-[backdrop-filter]:bg-white/60 lg:px-12 lg:py-6"
   >
     <div class="group flex cursor-pointer items-center gap-4">
       <img
@@ -66,11 +66,11 @@
 
   <!-- Hero Section -->
   <header
-    class="mx-auto grid max-w-[1600px] grid-cols-1 items-center gap-16 px-6 pt-40 pb-20 lg:grid-cols-2 lg:px-12"
+    class="mx-auto grid max-w-[1600px] grid-cols-1 items-center gap-16 px-6 pt-32 pb-16 lg:grid-cols-2 lg:px-12 lg:pt-40 lg:pb-20"
   >
     <div class="relative z-10 space-y-10">
       <h1
-        class="text-6xl leading-[0.85] font-black tracking-tighter select-none lg:text-[7rem]"
+        class="text-5xl leading-[0.85] font-black tracking-tighter select-none lg:text-[7rem]"
       >
         BROWSER<br />
         AUTOMATION<br />
@@ -90,14 +90,14 @@
       <div class="flex flex-wrap gap-5 pt-4">
         <a
           href="#integration"
-          class="bg-[#0040DD] px-10 py-5 text-lg font-bold text-white shadow-xl shadow-[#0040DD]/20 transition-all hover:-translate-y-1 hover:bg-[#0030AA]"
+          class="bg-[#0040DD] px-6 py-4 text-lg font-bold text-white shadow-xl shadow-[#0040DD]/20 transition-all hover:-translate-y-1 hover:bg-[#0030AA] lg:px-10 lg:py-5"
         >
           INSTALL ENGINE
         </a>
         <a
           href="https://github.com/akashrtd/mime"
           target="_blank"
-          class="border-2 border-gray-200 bg-white px-10 py-5 text-lg font-bold text-gray-600 transition-all hover:border-black hover:text-black"
+          class="border-2 border-gray-200 bg-white px-6 py-4 text-lg font-bold text-gray-600 transition-all hover:border-black hover:text-black lg:px-10 lg:py-5"
         >
           VIEW SOURCE
         </a>
@@ -151,7 +151,7 @@
   <!-- Feature Grid -->
   <section
     id="features"
-    class="border-t border-gray-100 bg-gray-50/50 px-6 py-24 lg:px-12"
+    class="border-t border-gray-100 bg-gray-50/50 px-6 py-16 lg:px-12 lg:py-24"
   >
     <div class="mx-auto max-w-[1600px]">
       <div
@@ -259,7 +259,9 @@
   </section>
 
   <!-- Performance Section -->
-  <section class="border-t border-gray-100 bg-white px-6 py-24 lg:px-12">
+  <section
+    class="border-t border-gray-100 bg-white px-6 py-16 lg:px-12 lg:py-24"
+  >
     <div class="mx-auto max-w-[1600px]">
       <div class="mb-20 grid grid-cols-1 gap-12 lg:grid-cols-2">
         <div>
@@ -338,7 +340,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-4 text-center">
+          <div class="grid grid-cols-1 gap-4 text-center sm:grid-cols-3">
             <div class="border border-gray-100 p-4">
               <div class="text-xs font-bold text-gray-400 uppercase">
                 Startup
@@ -365,7 +367,10 @@
   </section>
 
   <!-- Install -->
-  <section id="integration" class="bg-[#0040DD] px-6 py-32 text-white lg:px-12">
+  <section
+    id="integration"
+    class="bg-[#0040DD] px-6 py-20 text-white lg:px-12 lg:py-32"
+  >
     <div class="mx-auto max-w-4xl text-center">
       <h2 class="mb-10 text-4xl font-bold tracking-tight lg:text-5xl">
         DEPLOY THE AGENT
@@ -378,7 +383,7 @@
           class="flex flex-1 items-center gap-3 px-8 py-5 text-left font-mono"
         >
           <span class="opacity-50 select-none">$</span>
-          <span class="font-bold"
+          <span class="font-bold break-all sm:break-normal"
             >go install github.com/akashrtd/mime/cmd/mime@latest</span
           >
         </div>
