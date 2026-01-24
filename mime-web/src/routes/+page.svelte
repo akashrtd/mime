@@ -2,6 +2,25 @@
   import { onMount } from "svelte";
   // Import logo dynamically so Vite handles the path/hashing
   import logoPath from "$lib/assets/mime-logo.png";
+
+  let perfVisible = false;
+
+  onMount(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            perfVisible = true;
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.3 },
+    );
+
+    const el = document.getElementById("perf-section");
+    if (el) observer.observe(el);
+  });
 </script>
 
 <svelte:head>
@@ -252,6 +271,7 @@
 
   <!-- Performance Section -->
   <section
+    id="perf-section"
     class="border-t border-gray-100 bg-white px-6 py-16 lg:px-12 lg:py-24"
   >
     <div class="mx-auto max-w-[1600px]">
@@ -281,7 +301,8 @@
               class="relative h-12 w-full overflow-hidden rounded-sm bg-gray-100"
             >
               <div
-                class="absolute top-0 left-0 h-full w-[50%] bg-[#0040DD]"
+                class="absolute top-0 left-0 h-full bg-[#0040DD] transition-all duration-1000 ease-out"
+                style="width: {perfVisible ? '50%' : '0%'}"
               ></div>
               <div
                 class="absolute inset-0 flex items-center justify-between px-4"
@@ -298,7 +319,8 @@
               class="relative h-12 w-full overflow-hidden rounded-sm bg-gray-100"
             >
               <div
-                class="absolute top-0 left-0 h-full w-[100%] bg-gray-300"
+                class="absolute top-0 left-0 h-full bg-gray-300 transition-all duration-1000 ease-out delay-200"
+                style="width: {perfVisible ? '100%' : '0%'}"
               ></div>
               <div
                 class="absolute inset-0 flex items-center justify-between px-4"
@@ -317,7 +339,8 @@
               class="relative h-12 w-full overflow-hidden rounded-sm bg-gray-100"
             >
               <div
-                class="absolute top-0 left-0 h-full w-[70%] bg-gray-300"
+                class="absolute top-0 left-0 h-full bg-gray-300 transition-all duration-1000 ease-out delay-300"
+                style="width: {perfVisible ? '70%' : '0%'}"
               ></div>
               <div
                 class="absolute inset-0 flex items-center justify-between px-4"
@@ -333,19 +356,34 @@
           </div>
 
           <div class="grid grid-cols-1 gap-4 text-center sm:grid-cols-3">
-            <div class="border border-gray-100 p-4">
+            <div
+              class="border border-gray-100 p-4 transition-all duration-500 {perfVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-4'}"
+              style="transition-delay: 0.4s"
+            >
               <div class="text-xs font-bold text-gray-400 uppercase">
                 Startup
               </div>
               <div class="mt-1 text-2xl font-bold text-[#0040DD]">650ms</div>
               <div class="text-xs text-green-500">vs 855ms</div>
             </div>
-            <div class="border border-gray-100 p-4">
+            <div
+              class="border border-gray-100 p-4 transition-all duration-500 {perfVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-4'}"
+              style="transition-delay: 0.5s"
+            >
               <div class="text-xs font-bold text-gray-400 uppercase">Nav</div>
               <div class="mt-1 text-2xl font-bold text-[#0040DD]">187ms</div>
               <div class="text-xs text-green-500">vs 808ms</div>
             </div>
-            <div class="border border-gray-100 p-4">
+            <div
+              class="border border-gray-100 p-4 transition-all duration-500 {perfVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-4'}"
+              style="transition-delay: 0.6s"
+            >
               <div class="text-xs font-bold text-gray-400 uppercase">
                 Extract
               </div>
