@@ -227,32 +227,24 @@
           <div
             class="mb-8 flex h-16 w-16 items-center justify-center bg-blue-50 text-[#0040DD] transition-colors group-hover:bg-[#0040DD] group-hover:text-white"
           >
-            <div
-              class="group border border-t-4 border-gray-100 bg-white p-10 shadow-sm transition-all duration-300 hover:border-[#0040DD] hover:shadow-2xl"
+            <svg
+              class="h-8 w-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              ></path></svg
             >
-              <div
-                class="mb-8 flex h-16 w-16 items-center justify-center bg-blue-50 text-[#0040DD] transition-colors group-hover:bg-[#0040DD] group-hover:text-white"
-              >
-                <svg
-                  class="h-8 w-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  ><path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  ></path></svg
-                >
-              </div>
-              <h3 class="mb-4 text-2xl font-bold">No Runtime</h3>
-              <p class="leading-relaxed text-gray-500">
-                A single static binary. No Node_modules, no Python venv, no
-                dependency hell. Just <code>go install</code> and run.
-              </p>
-            </div>
           </div>
+          <h3 class="mb-4 text-2xl font-bold">No Runtime</h3>
+          <p class="leading-relaxed text-gray-500">
+            A single static binary. No Node_modules, no Python venv, no
+            dependency hell. Just <code>go install</code> and run.
+          </p>
         </div>
       </div>
     </div>
