@@ -158,12 +158,12 @@
         class="mb-20 flex flex-col items-end justify-between gap-8 md:flex-row"
       >
         <h2 class="max-w-2xl text-5xl font-bold tracking-tighter lg:text-7xl">
-          BUILT FOR<br />THE MACHINE.
+          NOT ANOTHER<br />TESTING TOOL.
         </h2>
         <div
           class="max-w-xs text-right text-sm font-bold tracking-widest text-gray-500 uppercase"
         >
-          Performance Specs<br />
+          Built for Agents<br />
           v1.0.0 Stable
         </div>
       </div>
@@ -227,24 +227,138 @@
           <div
             class="mb-8 flex h-16 w-16 items-center justify-center bg-blue-50 text-[#0040DD] transition-colors group-hover:bg-[#0040DD] group-hover:text-white"
           >
-            <svg
-              class="h-8 w-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
-              ></path></svg
+            <div
+              class="group border border-t-4 border-gray-100 bg-white p-10 shadow-sm transition-all duration-300 hover:border-[#0040DD] hover:shadow-2xl"
             >
+              <div
+                class="mb-8 flex h-16 w-16 items-center justify-center bg-blue-50 text-[#0040DD] transition-colors group-hover:bg-[#0040DD] group-hover:text-white"
+              >
+                <svg
+                  class="h-8 w-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path></svg
+                >
+              </div>
+              <h3 class="mb-4 text-2xl font-bold">No Runtime</h3>
+              <p class="leading-relaxed text-gray-500">
+                A single static binary. No Node_modules, no Python venv, no
+                dependency hell. Just <code>go install</code> and run.
+              </p>
+            </div>
           </div>
-          <h3 class="mb-4 text-2xl font-bold">State Preservation</h3>
-          <p class="leading-relaxed text-gray-500">
-            Persistent sessions allow agents to maintain login states and
-            cookies across multiple workflow steps.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Section -->
+  <section class="border-t border-gray-100 bg-white px-6 py-24 lg:px-12">
+    <div class="mx-auto max-w-[1600px]">
+      <div class="mb-20 grid grid-cols-1 gap-12 lg:grid-cols-2">
+        <div>
+          <h2 class="mb-6 text-5xl font-bold tracking-tighter lg:text-7xl">
+            ENGINEERED<br />FOR SPEED.
+          </h2>
+          <p class="max-w-md text-xl leading-relaxed font-light text-gray-500">
+            MIME bypasses the Node.js bridge overhead, communicating directly
+            with the browser via CDP over Go's lightning-fast scheduler.
           </p>
+        </div>
+
+        <div class="space-y-12">
+          <!-- Total Time -->
+          <div class="space-y-4">
+            <div
+              class="flex justify-between text-sm font-bold tracking-widest uppercase"
+            >
+              <span>Total Execution Time</span>
+              <span class="text-[#0040DD]">MIME is 2x Faster</span>
+            </div>
+
+            <!-- MIME -->
+            <div
+              class="relative h-12 w-full overflow-hidden rounded-sm bg-gray-100"
+            >
+              <div
+                class="absolute top-0 left-0 h-full w-[50%] bg-[#0040DD]"
+              ></div>
+              <div
+                class="absolute inset-0 flex items-center justify-between px-4"
+              >
+                <span class="z-10 text-sm font-bold text-white">MIME</span>
+                <span class="z-10 font-mono text-sm font-bold text-white"
+                  >934ms</span
+                >
+              </div>
+            </div>
+
+            <!-- Puppeteer -->
+            <div
+              class="relative h-12 w-full overflow-hidden rounded-sm bg-gray-100"
+            >
+              <div
+                class="absolute top-0 left-0 h-full w-[100%] bg-gray-300"
+              ></div>
+              <div
+                class="absolute inset-0 flex items-center justify-between px-4"
+              >
+                <span class="z-10 text-sm font-bold text-gray-600"
+                  >Puppeteer</span
+                >
+                <span class="z-10 font-mono text-sm font-bold text-gray-600"
+                  >1843ms</span
+                >
+              </div>
+            </div>
+
+            <!-- Playwright -->
+            <div
+              class="relative h-12 w-full overflow-hidden rounded-sm bg-gray-100"
+            >
+              <div
+                class="absolute top-0 left-0 h-full w-[70%] bg-gray-300"
+              ></div>
+              <div
+                class="absolute inset-0 flex items-center justify-between px-4"
+              >
+                <span class="z-10 text-sm font-bold text-gray-600"
+                  >Playwright</span
+                >
+                <span class="z-10 font-mono text-sm font-bold text-gray-600"
+                  >1304ms</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="border border-gray-100 p-4">
+              <div class="text-xs font-bold text-gray-400 uppercase">
+                Startup
+              </div>
+              <div class="mt-1 text-2xl font-bold text-[#0040DD]">650ms</div>
+              <div class="text-xs text-green-500">vs 855ms</div>
+            </div>
+            <div class="border border-gray-100 p-4">
+              <div class="text-xs font-bold text-gray-400 uppercase">Nav</div>
+              <div class="mt-1 text-2xl font-bold text-[#0040DD]">187ms</div>
+              <div class="text-xs text-green-500">vs 808ms</div>
+            </div>
+            <div class="border border-gray-100 p-4">
+              <div class="text-xs font-bold text-gray-400 uppercase">
+                Extract
+              </div>
+              <div class="mt-1 text-2xl font-bold text-[#0040DD]">2ms</div>
+              <div class="text-xs text-green-500">vs 17ms</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
