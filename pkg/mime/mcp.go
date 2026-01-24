@@ -60,7 +60,11 @@ type ExtractOutput struct {
 }
 
 // ScreenshotInput for screenshot tool (empty - no params needed)
-type ScreenshotInput struct{}
+// ScreenshotInput for screenshot tool
+type ScreenshotInput struct {
+	Format  string `json:"format,omitempty"`  // "png" (default) or "jpeg"
+	Quality int    `json:"quality,omitempty"` // 0-100, only for jpeg
+}
 
 // ScreenshotOutput for screenshot tool
 type ScreenshotOutput struct {
@@ -195,11 +199,15 @@ func (s *MCPServer) registerTools() {
 			Description: "Capture a screenshot of the current page (returns base64-encoded PNG)",
 		},
 		func(ctx context.Context, req *mcp.CallToolRequest, input ScreenshotInput) (*mcp.CallToolResult, ScreenshotOutput, error) {
-			data, err := s.browser.Screenshot()
+			data, err := s.browser.Screenshot(input.Format, input.Quality)
 			if err != nil {
 				return nil, ScreenshotOutput{}, fmt.Errorf("screenshot failed: %w", err)
 			}
-			return nil, ScreenshotOutput{Screenshot: data, Format: "base64-png"}, nil
+			format := "base64-png"
+			if input.Format == "jpeg" || input.Format == "jpg" {
+				format = "base64-jpeg"
+			}
+			return nil, ScreenshotOutput{Screenshot: data, Format: format}, nil
 		},
 	)
 

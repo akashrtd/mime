@@ -60,7 +60,17 @@ func NewBrowser(ctx context.Context, opts *BrowserOptions) (*Browser, error) {
 	}
 
 	// Launch browser
-	l := launcher.New().Headless(opts.Headless)
+	// Launch browser with optimized flags for speed
+	l := launcher.New().
+		Headless(opts.Headless).
+		Set("disable-gpu", "true").
+		Set("no-sandbox", "true").
+		Set("disable-setuid-sandbox", "true").
+		Set("disable-dev-shm-usage", "true").
+		Set("disable-infobars", "true").
+		Set("no-first-run", "true").
+		Set("no-default-browser-check", "true")
+
 	if opts.UserDataDir != "" {
 		l = l.UserDataDir(opts.UserDataDir)
 	}
@@ -250,12 +260,28 @@ func (b *Browser) ExtractAttr(selector, attr string) (string, error) {
 }
 
 // Screenshot captures a screenshot and returns base64-encoded PNG
-func (b *Browser) Screenshot() (string, error) {
-	data, err := b.page.Screenshot(false, nil)
+// Screenshot captures a screenshot and returns base64-encoded string
+func (b *Browser) Screenshot(format string, quality int) (string, error) {
+	req := &proto.PageCaptureScreenshot{
+		Format: proto.PageCaptureScreenshotFormatPng,
+	}
+
+	if format == "jpeg" || format == "jpg" {
+		req.Format = proto.PageCaptureScreenshotFormatJpeg
+		if quality > 0 && quality <= 100 {
+			q := quality
+			req.Quality = &q
+		} else {
+			q := 80 // Default JPEG quality for speed
+			req.Quality = &q
+		}
+	}
+
+	data, err := req.Call(b.page)
 	if err != nil {
 		return "", fmt.Errorf("failed to capture screenshot: %w", err)
 	}
-	return base64.StdEncoding.EncodeToString(data), nil
+	return base64.StdEncoding.EncodeToString(data.Data), nil
 }
 
 // WaitFor waits for an element to appear

@@ -59,7 +59,7 @@ func (t *Tracer) Capture(b *Browser, action, selector string) {
 	// We call internal method if possible, or just public one
 	// NOTE: We should modify Browser to expose raw *rod.Page or have an internal screenshot method to avoid loops?
 	// Actually public Screenshot() is fine as long as we don't instrument Screenshot() itself.
-	data, err := b.Screenshot()
+	data, err := b.Screenshot("", 0) // Default format (PNG)
 	if err == nil {
 		// Save screenshot to file
 		filename := fmt.Sprintf("step_%d_%s.png", len(t.Steps), time.Unix(step.Timestamp.Unix(), 0).Format("150405"))

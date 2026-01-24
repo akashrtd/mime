@@ -75,7 +75,7 @@ func (m *MIME) ExtractAttr(selector, attr string) (string, error) {
 
 // Screenshot captures a screenshot
 func (m *MIME) Screenshot() (string, error) {
-	return m.browser.Screenshot()
+	return m.browser.Screenshot("", 0)
 }
 
 // WaitFor waits for an element to appear
