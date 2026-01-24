@@ -28,9 +28,9 @@ vendor/
 Thumbs.db
 
 # Output files
-*.png
-*.jpg
-*.pdf
+# *.png - Removed to allow assets
+# *.jpg - Removed to allow assets
+# *.pdf - Removed to allow assets
 screenshots/
 
 # Logs
