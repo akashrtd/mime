@@ -287,7 +287,7 @@
                 class="absolute inset-0 flex items-center justify-between px-4"
               >
                 <span class="z-10 text-sm font-bold text-white">MIME</span>
-                <span class="z-10 font-mono text-sm font-bold text-white"
+                <span class="z-10 font-mono text-sm font-bold text-[#0040DD]"
                   >934ms</span
                 >
               </div>
