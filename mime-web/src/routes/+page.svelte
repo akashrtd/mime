@@ -12,6 +12,24 @@
   />
   <!-- Force favicon via import to ensure correct path -->
   <link rel="icon" href={logoPath} />
+
+  <!-- Open Graph / Link Preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MIME | Integrated Modern Executor" />
+  <meta
+    property="og:description"
+    content="The headless browser automation engine for AI agents. Built with Go and Rod, native to the Model Context Protocol."
+  />
+  <meta property="og:image" content={logoPath} />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="MIME | Integrated Modern Executor" />
+  <meta
+    name="twitter:description"
+    content="The headless browser automation engine for AI agents."
+  />
+  <meta name="twitter:image" content={logoPath} />
 </svelte:head>
 
 <div
