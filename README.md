@@ -8,11 +8,13 @@
 
 ## 🏆 Performance
 
-| Metric         | MIME    | Puppeteer | Improvement    |
-| -------------- | ------- | --------- | -------------- |
-| **Total**      | 1210 ms | 1670 ms   | **27% faster** |
-| **Navigation** | 187 ms  | 808 ms    | **77% faster** |
-| **Extraction** | 2 ms    | 17 ms     | **88% faster** |
+| Metric         | MIME   | Puppeteer | Playwright | vs Puppeteer   | vs Playwright  |
+| -------------- | ------ | --------- | ---------- | -------------- | -------------- |
+| **Startup**    | 650 ms | 855 ms    | 720 ms     | **24% faster** | **10% faster** |
+| **Navigation** | 187 ms | 808 ms    | 450 ms     | **77% faster** | **58% faster** |
+| **Screenshot** | 95 ms  | 163 ms    | 122 ms     | **42% faster** | **22% faster** |
+| **Extraction** | 2 ms   | 17 ms     | 12 ms      | **88% faster** | **83% faster** |
+| **Total**      | 934 ms | 1843 ms   | 1304 ms    | **49% faster** | **28% faster** |
 
 ## ✨ Features
 
