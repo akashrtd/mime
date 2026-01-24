@@ -5,6 +5,7 @@
  */
 
 import { MIME } from '@mime-browser/sdk';
+import path from 'path';
 
 interface Article {
     title: string;
@@ -12,8 +13,8 @@ interface Article {
 }
 
 async function scrapeHackerNews(): Promise<Article[]> {
-    // Use absolute path to binary since it's not in PATH
-    const mimePath = process.env.MIME_PATH || '/Users/akashrathod/Desktop/projects/mime/bin/mime';
+    // Use relative path to binary or environment variable
+    const mimePath = process.env.MIME_PATH || path.resolve(process.cwd(), '../../../bin/mime');
     const browser = await MIME.connect({ binaryPath: mimePath });
     const articles: Article[] = [];
 
