@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -148,6 +149,12 @@ func (b *Browser) Navigate(url string) error {
 			return fmt.Errorf("rate limit wait failed: %w", err)
 		}
 	}
+
+	// Security: Block file:// scheme
+	if strings.HasPrefix(url, "file://") {
+		return fmt.Errorf("security error: file:// scheme is not allowed")
+	}
+
 	b.logger.Info("navigating", "url", url)
 	if b.tracer != nil {
 		b.tracer.Capture(b, "navigate", url)

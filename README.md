@@ -18,8 +18,22 @@
 
 - 🚀 **High Performance** - Built with Go and Rod (Chrome DevTools Protocol)
 - 🤖 **MCP Native** - AI agents like Claude can control browsers directly
-- 📦 **Single Binary** - No runtime dependencies
-- 🎯 **Simple API** - Cleaner than Puppeteer
+- 📦 **Single Binary** - No runtime dependencies (Node/Python not required)
+- 🛡️ **Stealth Mode** - Built-in anti-detection and fingerprint masking
+- 🕵️ **Trace Mode** - Record every action with screenshots for debugging
+- ⚡ **Auto-Wait** - Intelligent stability checks (waiting for animations/enabled state)
+
+## 🆚 Comparison with Playwright
+
+| Feature          | MIME                           | Playwright                               |
+| :--------------- | :----------------------------- | :--------------------------------------- |
+| **Architecture** | Single Static Binary (Go)      | Node.js Runtime + NPM Modules            |
+| **Use Case**     | **AI Agents & LLMs**           | E2E Testing & QA                         |
+| **Installation** | `go install` (Zero Config)     | `npm install` + `npx playwright install` |
+| **Performance**  | **High** (Go + Raw CDP)        | Moderate (JS Bridge Overhead)            |
+| **Stealth**      | **Native** (Integrated)        | Requires plugins (`stealth-evasions`)    |
+| **Security**     | Sandbox-ready, Block `file://` | Full local access by default             |
+| **Ecosystem**    | MCP-First (Claude/Cursor)      | Developer-First (VS Code / CI)           |
 
 ## 🚀 Installation
 
