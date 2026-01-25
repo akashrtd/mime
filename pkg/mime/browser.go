@@ -321,7 +321,10 @@ func (b *Browser) Execute(script string) (interface{}, error) {
 			return nil, fmt.Errorf("rate limit wait failed: %w", err)
 		}
 	}
-	result, err := b.page.Eval(script)
+	// Wrap script in a function to work with rod's Eval
+	// rod's Eval expects: `function() { ... }` format
+	wrappedScript := fmt.Sprintf("() => { return %s; }", script)
+	result, err := b.page.Eval(wrappedScript)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute script: %w", err)
 	}
