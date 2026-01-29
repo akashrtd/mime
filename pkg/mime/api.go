@@ -103,6 +103,16 @@ func (m *MIME) Title() (string, error) {
 	return m.browser.Title()
 }
 
+// Scroll scrolls the window or an element
+func (m *MIME) Scroll(selector string, x, y int) error {
+	return m.browser.Scroll(selector, x, y)
+}
+
+// Links extracts all links from the current page
+func (m *MIME) Links() ([]Link, error) {
+	return m.browser.Links()
+}
+
 // Close closes the browser
 func (m *MIME) Close() error {
 	return m.browser.Close()

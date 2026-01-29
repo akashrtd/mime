@@ -2,6 +2,8 @@ package mime
 
 import (
 	"fmt"
+
+	"github.com/go-rod/rod/lib/proto"
 )
 
 // StealthOptions configures anti-detection measures
@@ -27,12 +29,11 @@ func (b *Browser) ApplyStealth(opts *StealthOptions) error {
 
 	// 1. Override User-Agent
 	if opts.UserAgent != "" {
-		// Use rod's SetUserAgent? Or just via CDP
-		// browser.go doesn't expose easy user agent setter yet, we can do it via page.SetUserAgent
-		// But b.page isn't locked.
-
-		// For now, let's assume we do this on the current page
-		// NOTE: Ideally this should be set at Browser context level on creation
+		if err := b.page.SetUserAgent(&proto.NetworkSetUserAgentOverride{
+			UserAgent: opts.UserAgent,
+		}); err != nil {
+			return fmt.Errorf("failed to set user agent: %w", err)
+		}
 	}
 
 	// 2. Hide webdriver flag

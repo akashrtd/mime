@@ -82,7 +82,7 @@ func TestIntegration_ObserveAndAct(t *testing.T) {
 		}
 
 		// Verify value
-		valResult, err := browser.Execute(`() => document.getElementById('email').value`)
+		valResult, err := browser.Execute(`document.getElementById('email').value`)
 		if err != nil {
 			t.Fatalf("Failed to verify value: %v", err)
 		}
@@ -108,7 +108,7 @@ func TestIntegration_ObserveAndAct(t *testing.T) {
 		time.Sleep(100 * time.Millisecond)
 
 		// Verify background color
-		bgResult, err := browser.Execute(`() => document.body.style.backgroundColor`)
+		bgResult, err := browser.Execute(`document.body.style.backgroundColor`)
 		if err != nil {
 			t.Fatalf("Failed to verify background: %v", err)
 		}
