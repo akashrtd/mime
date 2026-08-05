@@ -348,11 +348,15 @@ func (b *Browser) URL() string {
 
 // Title returns the current page title
 func (b *Browser) Title() (string, error) {
-	info, err := b.page.Info()
+	// Read document.title directly rather than the CDP target info: the
+	// target's title field updates asynchronously via Target.targetInfoChanged
+	// and can still report "about:blank" immediately after Navigate() returns,
+	// even though the document itself has already loaded.
+	result, err := b.page.Eval(`() => document.title`)
 	if err != nil {
-		return "", fmt.Errorf("failed to get page info: %w", err)
+		return "", fmt.Errorf("failed to get page title: %w", err)
 	}
-	return info.Title, nil
+	return result.Value.Str(), nil
 }
 
 // Close closes the browser

@@ -33,6 +33,18 @@ func TestIntegration_ObserveAndAct(t *testing.T) {
 		t.Fatalf("Failed to navigate: %v", err)
 	}
 
+	// 3b. Title() must reflect the loaded page immediately after Navigate,
+	// not a stale "about:blank" from before the CDP target info settles.
+	t.Run("Title", func(t *testing.T) {
+		title, err := browser.Title()
+		if err != nil {
+			t.Fatalf("Title failed: %v", err)
+		}
+		if title != "Test Page - Forms" {
+			t.Errorf("Expected title %q, got %q", "Test Page - Forms", title)
+		}
+	})
+
 	// 4. Test Observe
 	t.Run("Observe", func(t *testing.T) {
 		obs, err := browser.Observe()
